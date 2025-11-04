@@ -15,7 +15,7 @@ bibtex_bibfiles:
 
 repository:
   url: https://github.com/beria-kalpelbe/RL-workshop
-  path_to_book: docs
+  path_to_book: workshop
   branch: main
 
 html:
