@@ -1,0 +1,29 @@
+title: "Atelier : Apprentissage par Renforcement (RL)"
+author: "Béria C. Kalpélbé"
+logo: "_static/logo.png"
+language: fr
+
+execute:
+  execute_notebooks: false
+
+latex:
+  latex_documents:
+    targetname: atelier_rl.tex
+
+bibtex_bibfiles:
+  - references.bib
+
+repository:
+  url: https://github.com/beria-kalpelbe/RL-workshop
+  path_to_book: docs
+  branch: main
+
+html:
+  favicon: "_static/favicon.ico"
+  use_issues_button: true
+  use_repository_button: true
+
+sphinx:
+  config:
+    html_static_path: ["_static"] 
+    templates_path: ["_templates"]

@@ -1,0 +1,27 @@
+format: jb-book
+root: intro
+
+chapters:
+  - file: theorie/01_concepts_de_base
+    title: "1. Concepts fondamentaux du RL"
+  - file: theorie/02_dynamic_programming
+    title: "2. Dynamic Programming"
+  - file: theorie/03_monte_carlo
+    title: "3. Monte Carlo methods"
+  - file: theorie/04_td_learning
+    title: "4. TD, SARSA, Q-Learning"
+  - file: theorie/05_function_approximation
+    title: "5. Approximation & généralisation"
+  - file: theorie/06_policy_gradients
+    title: "6. Policy Gradient methods"
+  - file: theorie/07_deep_rl
+    title: "7. Deep Reinforcement Learning"
+
+  - file: pratiques/coding_session
+    title: "8. Etude de cas: CartPole"
+
+  - file: applications
+    title: "9. Applications avancées du RL"
+
+  - file: ressources
+    title: "Références et ressources"
