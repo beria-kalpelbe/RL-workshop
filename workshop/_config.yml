@@ -22,8 +22,9 @@ html:
   favicon: "_static/favicon.ico"
   use_issues_button: true
   use_repository_button: true
+  baseurl: /RL-workshop/
 
 sphinx:
   config:
-    html_static_path: ["_static"] 
+    html_static_path: ["_static"]
     templates_path: ["_templates"]
