@@ -1,0 +1,1134 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Dynamic Programming (DP) &#8212; Atelier : Apprentissage par Renforcement (RL)</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theorie/02_dynamic_programming';</script>
+    <link rel="canonical" href="/RL-workshop/theorie/02_dynamic_programming.html" />
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Monte Carlo Methods" href="03_monte_carlo.html" />
+    <link rel="prev" title="Concepts fondamentaux du RL" href="01_concepts_de_base.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Introduction à l’Apprentissage par Renforcement
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_concepts_de_base.html">1. Concepts fondamentaux du RL</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">2. Dynamic Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_monte_carlo.html">3. Monte Carlo methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_td_learning.html">4. TD, SARSA, Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_function_approximation.html">5. Approximation &amp; généralisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_policy_gradients.html">6. Policy Gradient methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_deep_rl.html">7. Deep Reinforcement Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pratiques/coding_session.html">8. Etude de cas: CartPole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../applications.html">9. Applications avancées du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ressources.html">Références et ressources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/theorie/02_dynamic_programming.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Dynamic Programming (DP)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#principes-fondamentaux">1. Principes fondamentaux</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">2. Value Iteration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#principe">2.1 Principe</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithme">2.2 Algorithme</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence">2.3 Convergence</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-iteration">3. Policy Iteration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.1 Principe</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.2 Algorithme</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3.3 Convergence</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparaison-value-iteration-vs-policy-iteration">4. Comparaison Value Iteration vs Policy Iteration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complexite-algorithmique">5. Complexité algorithmique</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">5.1 Value Iteration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">5.2 Policy Iteration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercices-theoriques">6. Exercices théoriques</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-1-value-iteration-sur-gridworld">Exercice 1 — Value Iteration sur gridworld</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-2-policy-evaluation-analytique">Exercice 2 — Policy Evaluation analytique</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-3-policy-improvement-step">Exercice 3 — Policy Improvement step</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-4-convergence-de-value-iteration">Exercice 4 — Convergence de Value Iteration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-5-nombre-d-iterations-necessaires">Exercice 5 — Nombre d’itérations nécessaires</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualisation-de-la-convergence">7. Visualisation de la convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations-du-dynamic-programming">8. Limitations du Dynamic Programming</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#points-cles-a-retenir">9. Points clés à retenir</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extensions-et-variantes">10. Extensions et variantes</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="dynamic-programming-dp">
+<h1>Dynamic Programming (DP)<a class="headerlink" href="#dynamic-programming-dp" title="Link to this heading">#</a></h1>
+<p>Le <strong>Dynamic Programming</strong> regroupe des méthodes qui exploitent les équations de Bellman et la <strong>connaissance complète du modèle</strong> (fonctions <span class="math notranslate nohighlight">\(P\)</span> et <span class="math notranslate nohighlight">\(R\)</span>) pour calculer des policies optimales de manière exacte et efficace.</p>
+<hr class="docutils" />
+<section id="principes-fondamentaux">
+<h2>1. Principes fondamentaux<a class="headerlink" href="#principes-fondamentaux" title="Link to this heading">#</a></h2>
+<div class="important admonition">
+<p class="admonition-title">Conditions d’application du DP</p>
+<p>Le Dynamic Programming s’applique aux problèmes qui satisfont deux propriétés :</p>
+<ol class="arabic simple">
+<li><p><strong>Structure optimale</strong> : Une solution optimale du problème global contient des solutions optimales aux sous-problèmes</p></li>
+<li><p><strong>Sous-problèmes chevauchants</strong> : Les mêmes sous-problèmes sont résolus plusieurs fois</p></li>
+</ol>
+<p>Les MDPs satisfont ces deux propriétés via les équations de Bellman.</p>
+<p><strong>Hypothèses du DP en RL :</strong></p>
+<ul class="simple">
+<li><p>Modèle <strong>complet</strong> : <span class="math notranslate nohighlight">\(P(s'|s,a)\)</span> et <span class="math notranslate nohighlight">\(R(s,a)\)</span> connus</p></li>
+<li><p>Espace d’états <strong>fini</strong> : <span class="math notranslate nohighlight">\(|S| &lt; \infty\)</span></p></li>
+<li><p>Espace d’actions <strong>fini</strong> : <span class="math notranslate nohighlight">\(|A| &lt; \infty\)</span></p></li>
+</ul>
+</div>
+<p>Le terme <strong>backup</strong> désigne la mise à jour de la valeur d’un état basée sur les valeurs de ses successeurs.</p>
+<p><strong>Full backup :</strong> mise à jour utilisant <strong>toutes</strong> les actions et <strong>tous</strong> les successeurs possibles.</p>
+<p><strong>Expected update :</strong> moyenner sur les transitions stochastiques.</p>
+<p><strong>Max backup :</strong> prendre le maximum sur les actions (Value Iteration).</p>
+</section>
+<hr class="docutils" />
+<section id="value-iteration">
+<h2>2. Value Iteration<a class="headerlink" href="#value-iteration" title="Link to this heading">#</a></h2>
+<section id="principe">
+<h3>2.1 Principe<a class="headerlink" href="#principe" title="Link to this heading">#</a></h3>
+<p>Value Iteration applique directement l’<strong>équation de Bellman optimale</strong> de manière itérative :</p>
+<div class="math notranslate nohighlight">
+\[V_{k+1}(s) = \max_{a \in A} \sum_{s' \in S} P(s'|s,a) \left[ R(s,a) + \gamma V_k(s') \right]\]</div>
+<div class="note admonition">
+<p class="admonition-title">Intuition</p>
+<p>On démarre avec <span class="math notranslate nohighlight">\(V_0(s) = 0\)</span> (ou valeurs arbitraires). À chaque itération :</p>
+<ol class="arabic simple">
+<li><p>Pour chaque état, on calcule la valeur en supposant qu’on joue optimalement à partir du prochain step</p></li>
+<li><p>On utilise les valeurs actuelles <span class="math notranslate nohighlight">\(V_k\)</span> pour estimer les valeurs futures</p></li>
+<li><p>On prend le <strong>maximum</strong> sur toutes les actions possibles</p></li>
+</ol>
+<p>Progressivement, les valeurs <strong>se propagent</strong> depuis les états terminaux/récompensants vers tous les états.</p>
+</div>
+</section>
+<section id="algorithme">
+<h3>2.2 Algorithme<a class="headerlink" href="#algorithme" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : Value Iteration
+────────────────────────────────────────────────
+Entrée : MDP (S, A, P, R, γ), seuil θ &gt; 0
+Sortie : V* (approximé), π* (optimal policy)
+
+// Initialisation
+pour chaque s ∈ S faire :
+    V(s) ← 0
+fin pour
+
+// Itération jusqu&#39;à convergence
+répéter :
+    Δ ← 0
+    
+    pour chaque s ∈ S faire :
+        v ← V(s)
+        
+        // Backup de Bellman optimale
+        V(s) ← max_a Σ_{s&#39;∈S} P(s&#39;|s,a)[R(s,a) + γ·V(s&#39;)]
+        
+        // Mesurer le changement
+        Δ ← max(Δ, |v - V(s)|)
+    fin pour
+    
+jusqu&#39;à Δ &lt; θ
+
+// Extraction de la policy optimale
+pour chaque s ∈ S faire :
+    π(s) ← argmax_a Σ_{s&#39;∈S} P(s&#39;|s,a)[R(s,a) + γ·V(s&#39;)]
+fin pour
+
+retourner V, π
+</pre></div>
+</div>
+</section>
+<section id="convergence">
+<h3>2.3 Convergence<a class="headerlink" href="#convergence" title="Link to this heading">#</a></h3>
+<div class="important admonition">
+<p class="admonition-title">Théorème de convergence</p>
+<p>Si <span class="math notranslate nohighlight">\(\gamma &lt; 1\)</span> et <span class="math notranslate nohighlight">\(|S| &lt; \infty\)</span>, alors Value Iteration converge vers <span class="math notranslate nohighlight">\(V^*\)</span> en un nombre fini d’itérations.</p>
+<p><strong>Taux de convergence :</strong> La contraction garantit :</p>
+<div class="math notranslate nohighlight">
+\[\|V_{k+1} - V^*\|_\infty \leq \gamma \|V_k - V^*\|_\infty\]</div>
+<p>Donc la convergence est <strong>géométrique</strong> avec taux <span class="math notranslate nohighlight">\(\gamma\)</span>.</p>
+<p><strong>Critère d’arrêt :</strong> Quand <span class="math notranslate nohighlight">\(\|V_{k+1} - V_k\|_\infty &lt; \theta\)</span>, on a :</p>
+<div class="math notranslate nohighlight">
+\[\|V_k - V^*\|_\infty \leq \frac{\theta}{1-\gamma}\]</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="policy-iteration">
+<h2>3. Policy Iteration<a class="headerlink" href="#policy-iteration" title="Link to this heading">#</a></h2>
+<section id="id1">
+<h3>3.1 Principe<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>Policy Iteration alterne entre deux phases :</p>
+<ol class="arabic simple">
+<li><p><strong>Policy Evaluation</strong> : Calculer <span class="math notranslate nohighlight">\(V^{\pi}\)</span> pour la policy courante <span class="math notranslate nohighlight">\(\pi\)</span></p></li>
+<li><p><strong>Policy Improvement</strong> : Améliorer <span class="math notranslate nohighlight">\(\pi\)</span> de manière gloutonne basée sur <span class="math notranslate nohighlight">\(V^{\pi}\)</span></p></li>
+</ol>
+<div class="note admonition">
+<p class="admonition-title">Différence avec Value Iteration</p>
+<ul class="simple">
+<li><p><strong>Value Iteration</strong> : combine évaluation et amélioration en une seule étape (max)</p></li>
+<li><p><strong>Policy Iteration</strong> : sépare explicitement les deux phases</p></li>
+<li><p>Policy Iteration converge souvent en <strong>moins d’itérations</strong> mais chaque itération coûte plus cher</p></li>
+</ul>
+</div>
+</section>
+<section id="id2">
+<h3>3.2 Algorithme<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : Policy Iteration
+────────────────────────────────────────────────
+Entrée : MDP (S, A, P, R, γ), seuil θ &gt; 0
+Sortie : π* (optimal policy)
+
+// Initialisation
+pour chaque s ∈ S faire :
+    π(s) ← action aléatoire de A
+    V(s) ← 0
+fin pour
+
+répéter :
+    
+    // ═══════════════════════════════════════
+    // PHASE 1 : Policy Evaluation
+    // ═══════════════════════════════════════
+    répéter :
+        Δ ← 0
+        pour chaque s ∈ S faire :
+            v ← V(s)
+            V(s) ← Σ_{s&#39;∈S} P(s&#39;|s,π(s))[R(s,π(s)) + γ·V(s&#39;)]
+            Δ ← max(Δ, |v - V(s)|)
+        fin pour
+    jusqu&#39;à Δ &lt; θ
+    
+    // ═══════════════════════════════════════
+    // PHASE 2 : Policy Improvement
+    // ═══════════════════════════════════════
+    policy_stable ← VRAI
+    
+    pour chaque s ∈ S faire :
+        old_action ← π(s)
+        
+        // Amélioration gloutonne
+        π(s) ← argmax_a Σ_{s&#39;∈S} P(s&#39;|s,a)[R(s,a) + γ·V(s&#39;)]
+        
+        si old_action ≠ π(s) alors :
+            policy_stable ← FAUX
+        fin si
+    fin pour
+    
+jusqu&#39;à policy_stable = VRAI
+
+retourner π
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>3.3 Convergence<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<div class="important admonition">
+<p class="admonition-title">Théorème de convergence</p>
+<p>Policy Iteration converge vers la policy optimale <span class="math notranslate nohighlight">\(\pi^*\)</span> en un <strong>nombre fini</strong> d’itérations.</p>
+<p><strong>Borne supérieure :</strong> Au plus <span class="math notranslate nohighlight">\(|A|^{|S|}\)</span> itérations (en pratique, beaucoup moins).</p>
+<p><strong>Monotonie :</strong> Chaque nouvelle policy est au moins aussi bonne : <span class="math notranslate nohighlight">\(V^{\pi_{k+1}}(s) \geq V^{\pi_k}(s)\)</span> pour tout <span class="math notranslate nohighlight">\(s\)</span>.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="comparaison-value-iteration-vs-policy-iteration">
+<h2>4. Comparaison Value Iteration vs Policy Iteration<a class="headerlink" href="#comparaison-value-iteration-vs-policy-iteration" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Critère</p></th>
+<th class="head"><p>Value Iteration</p></th>
+<th class="head"><p>Policy Iteration</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Mise à jour</strong></p></td>
+<td><p><span class="math notranslate nohighlight">\(\max_a\)</span> à chaque step</p></td>
+<td><p>Évaluation complète puis amélioration</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Convergence</strong></p></td>
+<td><p>Géométrique vers <span class="math notranslate nohighlight">\(V^*\)</span></p></td>
+<td><p>Finie vers <span class="math notranslate nohighlight">\(\pi^*\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Nombre d’itérations</strong></p></td>
+<td><p>Plus d’itérations</p></td>
+<td><p>Moins d’itérations</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Coût par itération</strong></p></td>
+<td><p>Léger (un sweep)</p></td>
+<td><p>Élevé (évaluation complète)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Quand l’utiliser</strong></p></td>
+<td><p>Espace d’états modéré</p></td>
+<td><p>Convergence rapide souhaitée</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><strong>Modified Policy Iteration</strong> combine les avantages : on fait quelques steps d’évaluation (pas jusqu’à convergence) puis on améliore. C’est un compromis efficace.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="complexite-algorithmique">
+<h2>5. Complexité algorithmique<a class="headerlink" href="#complexite-algorithmique" title="Link to this heading">#</a></h2>
+<section id="id4">
+<h3>5.1 Value Iteration<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p><strong>Par itération :</strong></p>
+<ul class="simple">
+<li><p>Pour chaque état <span class="math notranslate nohighlight">\(s\)</span> : <span class="math notranslate nohighlight">\(O(|A| \cdot |S|)\)</span> opérations (max sur actions, somme sur transitions)</p></li>
+<li><p>Total par itération : <span class="math notranslate nohighlight">\(O(|S| \cdot |A| \cdot |S|) = O(|S|^2 |A|)\)</span></p></li>
+</ul>
+<p><strong>Nombre d’itérations :</strong> <span class="math notranslate nohighlight">\(O\left(\log \frac{1}{\theta(1-\gamma)}\right)\)</span> pour atteindre précision <span class="math notranslate nohighlight">\(\theta\)</span></p>
+<p><strong>Complexité totale :</strong> <span class="math notranslate nohighlight">\(O\left(|S|^2 |A| \log \frac{1}{\theta(1-\gamma)}\right)\)</span></p>
+</section>
+<section id="id5">
+<h3>5.2 Policy Iteration<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p><strong>Policy Evaluation :</strong></p>
+<ul class="simple">
+<li><p>Méthode itérative : <span class="math notranslate nohighlight">\(O(|S|^2)\)</span> par sweep, plusieurs sweeps</p></li>
+<li><p>Méthode directe : <span class="math notranslate nohighlight">\(O(|S|^3)\)</span> (inversion matricielle)</p></li>
+</ul>
+<p><strong>Policy Improvement :</strong> <span class="math notranslate nohighlight">\(O(|S|^2 |A|)\)</span></p>
+<p><strong>Complexité totale :</strong> <span class="math notranslate nohighlight">\(O(k \cdot |S|^3)\)</span> où <span class="math notranslate nohighlight">\(k\)</span> est le nombre d’améliorations (souvent petit)</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="exercices-theoriques">
+<h2>6. Exercices théoriques<a class="headerlink" href="#exercices-theoriques" title="Link to this heading">#</a></h2>
+<section id="exercice-1-value-iteration-sur-gridworld">
+<h3>Exercice 1 — Value Iteration sur gridworld<a class="headerlink" href="#exercice-1-value-iteration-sur-gridworld" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>Considérons un <strong>gridworld 1D</strong> avec 4 états : <span class="math notranslate nohighlight">\(S = \{s_1, s_2, s_3, s_4\}\)</span></p>
+<p><strong>Dynamique (déterministe) :</strong></p>
+<ul class="simple">
+<li><p>Actions : <span class="math notranslate nohighlight">\(A = \{\text{gauche}, \text{droite}\}\)</span></p></li>
+<li><p>“droite” depuis <span class="math notranslate nohighlight">\(s_i\)</span> → <span class="math notranslate nohighlight">\(s_{i+1}\)</span> (si existe, sinon reste en place)</p></li>
+<li><p>“gauche” depuis <span class="math notranslate nohighlight">\(s_i\)</span> → <span class="math notranslate nohighlight">\(s_{i-1}\)</span> (si existe, sinon reste en place)</p></li>
+</ul>
+<p><strong>Rewards :</strong></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(R(s_4, \text{droite}) = +10\)</span> (goal atteint)</p></li>
+<li><p><span class="math notranslate nohighlight">\(R(s, a) = 0\)</span> pour toutes les autres transitions</p></li>
+</ul>
+<p><strong>Paramètres :</strong> <span class="math notranslate nohighlight">\(\gamma = 0.9\)</span></p>
+<p><strong>Effectuez 3 itérations de Value Iteration</strong> en partant de <span class="math notranslate nohighlight">\(V_0(s) = 0\)</span> pour tout <span class="math notranslate nohighlight">\(s\)</span>.</p>
+<p>Calculez <span class="math notranslate nohighlight">\(V_1\)</span>, <span class="math notranslate nohighlight">\(V_2\)</span>, <span class="math notranslate nohighlight">\(V_3\)</span>.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 1</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>Itération 0 :</strong> <span class="math notranslate nohighlight">\(V_0 = [0, 0, 0, 0]\)</span></p>
+<p class="sd-card-text"><strong>Itération 1 :</strong></p>
+<p class="sd-card-text">Pour chaque état, calculer <span class="math notranslate nohighlight">\(V_1(s) = \max_a \sum_{s'} P(s'|s,a)[R(s,a) + \gamma V_0(s')]\)</span></p>
+<ul class="simple">
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_1(s_1) = \max\{0 + 0.9 \times 0, \quad 0 + 0.9 \times 0\} = 0\)</span></p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_1(s_2) = \max\{0 + 0.9 \times 0, \quad 0 + 0.9 \times 0\} = 0\)</span></p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_1(s_3) = \max\{0 + 0.9 \times 0, \quad 0 + 0.9 \times 0\} = 0\)</span></p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_1(s_4) = \max\{0 + 0.9 \times 0, \quad 10 + 0.9 \times 0\} = 10\)</span></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[V_1 = [0, 0, 0, 10]\]</div>
+<p class="sd-card-text"><strong>Itération 2 :</strong></p>
+<ul class="simple">
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_2(s_1) = \max\{0, 0 + 0.9 \times 0\} = 0\)</span></p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_2(s_2) = \max\{0 + 0.9 \times 0, \quad 0 + 0.9 \times 0\} = 0\)</span></p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_2(s_3) = \max\{0 + 0.9 \times 0, \quad 0 + 0.9 \times 10\} = 9\)</span></p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_2(s_4) = \max\{0 + 0.9 \times 0, \quad 10 + 0.9 \times 10\} = 19\)</span></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[V_2 = [0, 0, 9, 19]\]</div>
+<p class="sd-card-text"><strong>Itération 3 :</strong></p>
+<ul class="simple">
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_3(s_1) = 0\)</span></p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_3(s_2) = \max\{0, \quad 0 + 0.9 \times 9\} = 8.1\)</span></p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_3(s_3) = \max\{0 + 0.9 \times 8.1, \quad 0 + 0.9 \times 19\} = \max\{7.29, 17.1\} = 17.1\)</span></p></li>
+<li><p class="sd-card-text"><span class="math notranslate nohighlight">\(V_3(s_4) = \max\{0 + 0.9 \times 17.1, \quad 10 + 0.9 \times 19\} = \max\{15.39, 27.1\} = 27.1\)</span></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[V_3 = [0, 8.1, 17.1, 27.1]\]</div>
+<p class="sd-card-text"><strong>Observation :</strong> Les valeurs se <strong>propagent</strong> de droite à gauche depuis l’état goal. Chaque itération propage la valeur d’un état supplémentaire vers la gauche.</p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-2-policy-evaluation-analytique">
+<h3>Exercice 2 — Policy Evaluation analytique<a class="headerlink" href="#exercice-2-policy-evaluation-analytique" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>Soit un MDP à 2 états avec une policy fixe <span class="math notranslate nohighlight">\(\pi\)</span>.</p>
+<p><strong>États :</strong> <span class="math notranslate nohighlight">\(S = \{s_A, s_B\}\)</span></p>
+<p><strong>Policy :</strong> <span class="math notranslate nohighlight">\(\pi(s_A) = \text{action } a\)</span>, <span class="math notranslate nohighlight">\(\pi(s_B) = \text{action } b\)</span></p>
+<p><strong>Transitions sous <span class="math notranslate nohighlight">\(\pi\)</span> :</strong></p>
+<ul class="simple">
+<li><p>Depuis <span class="math notranslate nohighlight">\(s_A\)</span> : aller en <span class="math notranslate nohighlight">\(s_B\)</span> avec probabilité 1, reward = 2</p></li>
+<li><p>Depuis <span class="math notranslate nohighlight">\(s_B\)</span> : aller en <span class="math notranslate nohighlight">\(s_A\)</span> avec probabilité 1, reward = 4</p></li>
+</ul>
+<p><strong>Paramètres :</strong> <span class="math notranslate nohighlight">\(\gamma = 0.8\)</span></p>
+<p><strong>Calculez analytiquement</strong> <span class="math notranslate nohighlight">\(V^{\pi}(s_A)\)</span> et <span class="math notranslate nohighlight">\(V^{\pi}(s_B)\)</span> en résolvant le système d’équations de Bellman.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 2</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>Système d’équations de Bellman :</strong></p>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s_A) = R(s_A, \pi(s_A)) + \gamma \sum_{s'} P(s'|s_A, \pi(s_A)) V^{\pi}(s')\]</div>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s_A) = 2 + 0.8 \times V^{\pi}(s_B)\]</div>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s_B) = 4 + 0.8 \times V^{\pi}(s_A)\]</div>
+<p class="sd-card-text"><strong>Résolution par substitution :</strong></p>
+<p class="sd-card-text">De la première équation : <span class="math notranslate nohighlight">\(V^{\pi}(s_A) = 2 + 0.8 V^{\pi}(s_B)\)</span></p>
+<p class="sd-card-text">Substituons dans la seconde :</p>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s_B) = 4 + 0.8(2 + 0.8 V^{\pi}(s_B))\]</div>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s_B) = 4 + 1.6 + 0.64 V^{\pi}(s_B)\]</div>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s_B) - 0.64 V^{\pi}(s_B) = 5.6\]</div>
+<div class="math notranslate nohighlight">
+\[0.36 V^{\pi}(s_B) = 5.6\]</div>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s_B) = \frac{5.6}{0.36} = \frac{140}{9} \approx 15.56\]</div>
+<p class="sd-card-text">Puis :</p>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s_A) = 2 + 0.8 \times 15.56 = 2 + 12.45 = 14.45\]</div>
+<p class="sd-card-text"><strong>Vérification :</strong></p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}V^{\pi}(s_A) = 2 + 0.8 \times 15.56 = 14.45$$ ✓\\$$V^{\pi}(s_B) = 4 + 0.8 \times 14.45 = 4 + 11.56 = 15.56$$ ✓\\**Solution :**\\$$V^{\pi}(s_A) = \frac{130}{9} \approx 14.44\end{aligned}\end{align} \]</div>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s_B) = \frac{140}{9} \approx 15.56\]</div>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-3-policy-improvement-step">
+<h3>Exercice 3 — Policy Improvement step<a class="headerlink" href="#exercice-3-policy-improvement-step" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>On a évalué une policy <span class="math notranslate nohighlight">\(\pi\)</span> et obtenu :</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>État</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(V^{\pi}(s)\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(s_1\)</span></p></td>
+<td><p>10.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(s_2\)</span></p></td>
+<td><p>15.0</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(s_3\)</span></p></td>
+<td><p>8.0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Transitions et rewards :</strong></p>
+<p>Depuis <span class="math notranslate nohighlight">\(s_1\)</span> :</p>
+<ul class="simple">
+<li><p>Action <span class="math notranslate nohighlight">\(a_1\)</span> : 70% → <span class="math notranslate nohighlight">\(s_2\)</span>, 30% → <span class="math notranslate nohighlight">\(s_3\)</span>, reward = 1</p></li>
+<li><p>Action <span class="math notranslate nohighlight">\(a_2\)</span> : 100% → <span class="math notranslate nohighlight">\(s_1\)</span>, reward = 5</p></li>
+</ul>
+<p>Depuis <span class="math notranslate nohighlight">\(s_2\)</span> :</p>
+<ul class="simple">
+<li><p>Action <span class="math notranslate nohighlight">\(a_1\)</span> : 50% → <span class="math notranslate nohighlight">\(s_1\)</span>, 50% → <span class="math notranslate nohighlight">\(s_3\)</span>, reward = 2</p></li>
+<li><p>Action <span class="math notranslate nohighlight">\(a_2\)</span> : 100% → <span class="math notranslate nohighlight">\(s_3\)</span>, reward = 0</p></li>
+</ul>
+<p><strong>Paramètres :</strong> <span class="math notranslate nohighlight">\(\gamma = 0.9\)</span></p>
+<p><strong>Policy actuelle :</strong> <span class="math notranslate nohighlight">\(\pi(s_1) = a_1\)</span>, <span class="math notranslate nohighlight">\(\pi(s_2) = a_1\)</span></p>
+<p><strong>Questions :</strong></p>
+<p>a) Calculez <span class="math notranslate nohighlight">\(Q^{\pi}(s_1, a_1)\)</span> et <span class="math notranslate nohighlight">\(Q^{\pi}(s_1, a_2)\)</span></p>
+<p>b) Quelle action devrait choisir la nouvelle policy améliorée pour <span class="math notranslate nohighlight">\(s_1\)</span> ?</p>
+<p>c) Calculez <span class="math notranslate nohighlight">\(Q^{\pi}(s_2, a_1)\)</span> et <span class="math notranslate nohighlight">\(Q^{\pi}(s_2, a_2)\)</span></p>
+<p>d) La policy actuelle doit-elle être changée pour <span class="math notranslate nohighlight">\(s_2\)</span> ?</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 3</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>a) Q-values pour <span class="math notranslate nohighlight">\(s_1\)</span> :</strong></p>
+<div class="math notranslate nohighlight">
+\[Q^{\pi}(s_1, a_1) = R(s_1, a_1) + \gamma \sum_{s'} P(s'|s_1, a_1) V^{\pi}(s')\]</div>
+<div class="math notranslate nohighlight">
+\[= 1 + 0.9 [0.7 \times 15.0 + 0.3 \times 8.0]\]</div>
+<div class="math notranslate nohighlight">
+\[= 1 + 0.9 [10.5 + 2.4]\]</div>
+<div class="math notranslate nohighlight">
+\[= 1 + 0.9 \times 12.9 = 1 + 11.61 = 12.61\]</div>
+<div class="math notranslate nohighlight">
+\[Q^{\pi}(s_1, a_2) = 5 + 0.9 \times 1.0 \times 10.0\]</div>
+<div class="math notranslate nohighlight">
+\[= 5 + 9.0 = 14.0\]</div>
+<p class="sd-card-text"><strong>b) Amélioration pour <span class="math notranslate nohighlight">\(s_1\)</span> :</strong></p>
+<p class="sd-card-text">La nouvelle policy choisit : <span class="math notranslate nohighlight">\(\pi'(s_1) = \arg\max_a Q^{\pi}(s_1, a)\)</span></p>
+<p class="sd-card-text">Puisque <span class="math notranslate nohighlight">\(Q^{\pi}(s_1, a_2) = 14.0 &gt; Q^{\pi}(s_1, a_1) = 12.61\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[\pi'(s_1) = a_2\]</div>
+<p class="sd-card-text">La policy doit être <strong>changée</strong> de <span class="math notranslate nohighlight">\(a_1\)</span> à <span class="math notranslate nohighlight">\(a_2\)</span> pour <span class="math notranslate nohighlight">\(s_1\)</span>.</p>
+<p class="sd-card-text"><strong>c) Q-values pour <span class="math notranslate nohighlight">\(s_2\)</span> :</strong></p>
+<div class="math notranslate nohighlight">
+\[Q^{\pi}(s_2, a_1) = 2 + 0.9 [0.5 \times 10.0 + 0.5 \times 8.0]\]</div>
+<div class="math notranslate nohighlight">
+\[= 2 + 0.9 \times 9.0 = 2 + 8.1 = 10.1\]</div>
+<div class="math notranslate nohighlight">
+\[Q^{\pi}(s_2, a_2) = 0 + 0.9 \times 1.0 \times 8.0\]</div>
+<div class="math notranslate nohighlight">
+\[= 7.2\]</div>
+<p class="sd-card-text"><strong>d) Amélioration pour <span class="math notranslate nohighlight">\(s_2\)</span> :</strong></p>
+<p class="sd-card-text">Puisque <span class="math notranslate nohighlight">\(Q^{\pi}(s_2, a_1) = 10.1 &gt; Q^{\pi}(s_2, a_2) = 7.2\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[\pi'(s_2) = a_1\]</div>
+<p class="sd-card-text">La policy actuelle (<span class="math notranslate nohighlight">\(\pi(s_2) = a_1\)</span>) est <strong>déjà optimale</strong> pour <span class="math notranslate nohighlight">\(s_2\)</span>. Pas de changement nécessaire.</p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-4-convergence-de-value-iteration">
+<h3>Exercice 4 — Convergence de Value Iteration<a class="headerlink" href="#exercice-4-convergence-de-value-iteration" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>On effectue Value Iteration avec <span class="math notranslate nohighlight">\(\gamma = 0.9\)</span>, <span class="math notranslate nohighlight">\(\theta = 0.01\)</span>.</p>
+<p>Après l’itération <span class="math notranslate nohighlight">\(k\)</span>, on mesure : <span class="math notranslate nohighlight">\(\|V_{k+1} - V_k\|_\infty = 0.05\)</span></p>
+<p><strong>Questions :</strong></p>
+<p>a) L’algorithme doit-il continuer ou peut-il s’arrêter ?</p>
+<p>b) Donnez une borne supérieure sur l’erreur <span class="math notranslate nohighlight">\(\|V_k - V^*\|_\infty\)</span></p>
+<p>c) Si <span class="math notranslate nohighlight">\(\|V_{k+1} - V_k\|_\infty = 0.005\)</span>, quelle serait la nouvelle borne ?</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 4</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>a) Critère d’arrêt :</strong></p>
+<p class="sd-card-text">On arrête quand <span class="math notranslate nohighlight">\(\|V_{k+1} - V_k\|_\infty &lt; \theta\)</span></p>
+<p class="sd-card-text">Ici : <span class="math notranslate nohighlight">\(0.05 &gt; 0.01\)</span></p>
+<p class="sd-card-text">L’algorithme doit <strong>continuer</strong> (pas encore convergé).</p>
+<p class="sd-card-text"><strong>b) Borne sur l’erreur :</strong></p>
+<p class="sd-card-text">Le théorème de convergence nous donne :</p>
+<div class="math notranslate nohighlight">
+\[\|V_k - V^*\|_\infty \leq \frac{\gamma}{1-\gamma} \|V_{k+1} - V_k\|_\infty\]</div>
+<p class="sd-card-text">Avec <span class="math notranslate nohighlight">\(\gamma = 0.9\)</span> et <span class="math notranslate nohighlight">\(\|V_{k+1} - V_k\|_\infty = 0.05\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[\|V_k - V^*\|_\infty \leq \frac{0.9}{1-0.9} \times 0.05 = \frac{0.9}{0.1} \times 0.05\]</div>
+<div class="math notranslate nohighlight">
+\[= 9 \times 0.05 = 0.45\]</div>
+<p class="sd-card-text"><strong>Borne supérieure :</strong> L’erreur est au plus <strong>0.45</strong>.</p>
+<p class="sd-card-text"><strong>c) Nouvelle borne avec <span class="math notranslate nohighlight">\(\|V_{k+1} - V_k\|_\infty = 0.005\)</span> :</strong></p>
+<div class="math notranslate nohighlight">
+\[\|V_k - V^*\|_\infty \leq 9 \times 0.005 = 0.045\]</div>
+<p class="sd-card-text">Avec ce changement, l’algorithme peut s’arrêter (0.005 &lt; 0.01) et l’erreur garantie serait <strong>au plus 0.045</strong>.</p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-5-nombre-d-iterations-necessaires">
+<h3>Exercice 5 — Nombre d’itérations nécessaires<a class="headerlink" href="#exercice-5-nombre-d-iterations-necessaires" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>On veut garantir une précision <span class="math notranslate nohighlight">\(\epsilon = 0.001\)</span> dans Value Iteration.</p>
+<p><strong>Paramètres :</strong> <span class="math notranslate nohighlight">\(\gamma = 0.95\)</span>, valeur maximale possible <span class="math notranslate nohighlight">\(V_{\max} = 100\)</span></p>
+<p><strong>Combien d’itérations</strong> <span class="math notranslate nohighlight">\(k\)</span> sont nécessaires pour garantir <span class="math notranslate nohighlight">\(\|V_k - V^*\|_\infty &lt; \epsilon\)</span> ?</p>
+<p><strong>Indice :</strong> Utilisez <span class="math notranslate nohighlight">\(\|V_k - V^*\|_\infty \leq \gamma^k \frac{V_{\max}}{1-\gamma}\)</span></p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 5</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>Formule de convergence :</strong></p>
+<p class="sd-card-text">En partant de <span class="math notranslate nohighlight">\(V_0 = 0\)</span>, on a :</p>
+<div class="math notranslate nohighlight">
+\[\|V_k - V^*\|_\infty \leq \gamma^k \|V_0 - V^*\|_\infty \leq \gamma^k \frac{V_{\max}}{1-\gamma}\]</div>
+<p class="sd-card-text"><strong>Condition pour précision <span class="math notranslate nohighlight">\(\epsilon\)</span> :</strong></p>
+<div class="math notranslate nohighlight">
+\[\gamma^k \frac{V_{\max}}{1-\gamma} &lt; \epsilon\]</div>
+<div class="math notranslate nohighlight">
+\[\gamma^k &lt; \epsilon \frac{1-\gamma}{V_{\max}}\]</div>
+<div class="math notranslate nohighlight">
+\[k \log(\gamma) &lt; \log\left(\epsilon \frac{1-\gamma}{V_{\max}}\right)\]</div>
+<p class="sd-card-text">Attention : <span class="math notranslate nohighlight">\(\log(\gamma) &lt; 0\)</span> car <span class="math notranslate nohighlight">\(\gamma &lt; 1\)</span>, donc l’inégalité se renverse :</p>
+<div class="math notranslate nohighlight">
+\[k &gt; \frac{\log\left(\epsilon \frac{1-\gamma}{V_{\max}}\right)}{\log(\gamma)}\]</div>
+<p class="sd-card-text"><strong>Application numérique :</strong></p>
+<div class="math notranslate nohighlight">
+\[k &gt; \frac{\log\left(0.001 \times \frac{0.05}{100}\right)}{\log(0.95)}\]</div>
+<div class="math notranslate nohighlight">
+\[= \frac{\log(0.0000005)}{\log(0.95)}\]</div>
+<div class="math notranslate nohighlight">
+\[= \frac{\log(5 \times 10^{-7})}{\log(0.95)}\]</div>
+<div class="math notranslate nohighlight">
+\[= \frac{-14.51}{-0.0513} \approx 283\]</div>
+<p class="sd-card-text"><strong>Réponse :</strong> Il faut environ <strong>283 itérations</strong> pour garantir la précision souhaitée.</p>
+<p class="sd-card-text"><strong>Note :</strong> En pratique, la convergence est souvent plus rapide car cette borne est pessimiste.</p>
+</div>
+</details></section>
+</section>
+<hr class="docutils" />
+<section id="visualisation-de-la-convergence">
+<h2>7. Visualisation de la convergence<a class="headerlink" href="#visualisation-de-la-convergence" title="Link to this heading">#</a></h2>
+<div class="note admonition">
+<p class="admonition-title">Analyse de la convergence</p>
+<p>Pour visualiser la convergence de Value Iteration ou Policy Iteration, on peut tracer :</p>
+<ol class="arabic simple">
+<li><p><strong>Norme infinie des changements :</strong> <span class="math notranslate nohighlight">\(\|V_{k+1} - V_k\|_\infty\)</span> vs itération <span class="math notranslate nohighlight">\(k\)</span></p>
+<ul class="simple">
+<li><p>Devrait décroître géométriquement : ligne droite en échelle log</p></li>
+<li><p>Pente = <span class="math notranslate nohighlight">\(\log(\gamma)\)</span></p></li>
+</ul>
+</li>
+<li><p><strong>Erreur absolue (si <span class="math notranslate nohighlight">\(V^*\)</span> connu) :</strong> <span class="math notranslate nohighlight">\(\|V_k - V^*\|_\infty\)</span> vs <span class="math notranslate nohighlight">\(k\)</span></p>
+<ul class="simple">
+<li><p>Montre la vraie distance à l’optimal</p></li>
+</ul>
+</li>
+<li><p><strong>Valeur par état :</strong> <span class="math notranslate nohighlight">\(V_k(s)\)</span> pour quelques états représentatifs vs <span class="math notranslate nohighlight">\(k\)</span></p>
+<ul class="simple">
+<li><p>Montre comment les valeurs évoluent individuellement</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Décroissance géométrique :</strong></p>
+<div class="math notranslate nohighlight">
+\[\|V_{k+1} - V_k\|_\infty \leq \gamma \|V_k - V_{k-1}\|_\infty\]</div>
+<p>En échelle logarithmique : <span class="math notranslate nohighlight">\(\log(\|V_{k+1} - V_k\|) \leq \log(\gamma) + \log(\|V_k - V_{k-1}\|)\)</span></p>
+<p>Cela forme une <strong>droite de pente</strong> <span class="math notranslate nohighlight">\(\log(\gamma) &lt; 0\)</span>.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="limitations-du-dynamic-programming">
+<h2>8. Limitations du Dynamic Programming<a class="headerlink" href="#limitations-du-dynamic-programming" title="Link to this heading">#</a></h2>
+<div class="warning admonition">
+<p class="admonition-title">Quand DP n’est pas applicable</p>
+<ol class="arabic simple">
+<li><p><strong>Modèle inconnu</strong> : DP requiert <span class="math notranslate nohighlight">\(P(s'|s,a)\)</span> et <span class="math notranslate nohighlight">\(R(s,a)\)</span> explicites</p>
+<ul class="simple">
+<li><p>Dans beaucoup d’applications réelles, le modèle n’est pas disponible</p></li>
+<li><p>Solution : méthodes <strong>model-free</strong> (Q-Learning, SARSA, etc.)</p></li>
+</ul>
+</li>
+<li><p><strong>Grands espaces d’états</strong> : Complexité <span class="math notranslate nohighlight">\(O(|S|^2 |A|)\)</span> par itération</p>
+<ul class="simple">
+<li><p>Pour <span class="math notranslate nohighlight">\(|S| = 10^6\)</span> états : impraticable sans approximation</p></li>
+<li><p>Solution : <strong>function approximation</strong> (Deep RL)</p></li>
+</ul>
+</li>
+<li><p><strong>Espaces continus</strong> : Impossibilité de représenter toutes les valeurs</p>
+<ul class="simple">
+<li><p>Solution : discrétisation ou approximateurs de fonctions</p></li>
+</ul>
+</li>
+<li><p><strong>MDPs partiellement observables</strong> : DP standard assume observabilité complète</p>
+<ul class="simple">
+<li><p>Solution : algorithmes pour POMDPs (plus complexes)</p></li>
+</ul>
+</li>
+</ol>
+</div>
+</section>
+<hr class="docutils" />
+<section id="points-cles-a-retenir">
+<h2>9. Points clés à retenir<a class="headerlink" href="#points-cles-a-retenir" title="Link to this heading">#</a></h2>
+<div class="important admonition">
+<p class="admonition-title">Concepts essentiels</p>
+<ol class="arabic simple">
+<li><p><strong>DP = planification</strong> avec modèle complet du MDP</p></li>
+<li><p><strong>Value Iteration</strong> : itère l’équation de Bellman optimale directement</p></li>
+<li><p><strong>Policy Iteration</strong> : alterne évaluation et amélioration</p></li>
+<li><p><strong>Convergence garantie</strong> : pour MDPs finis avec <span class="math notranslate nohighlight">\(\gamma &lt; 1\)</span></p></li>
+<li><p><strong>Convergence géométrique</strong> : taux <span class="math notranslate nohighlight">\(\gamma\)</span> pour Value Iteration</p></li>
+<li><p><strong>Complexité</strong> : <span class="math notranslate nohighlight">\(O(|S|^2 |A|)\)</span> par itération</p></li>
+<li><p><strong>Limitation</strong> : nécessite connaissance du modèle</p></li>
+<li><p><strong>Backup operations</strong> : mises à jour exploitant la structure récursive</p></li>
+</ol>
+</div>
+</section>
+<hr class="docutils" />
+<section id="extensions-et-variantes">
+<h2>10. Extensions et variantes<a class="headerlink" href="#extensions-et-variantes" title="Link to this heading">#</a></h2>
+<div class="note admonition">
+<p class="admonition-title">Algorithmes dérivés</p>
+<ul class="simple">
+<li><p><strong>Asynchronous DP</strong> : mise à jour des états dans un ordre arbitraire (pas de sweep complet)</p></li>
+<li><p><strong>Prioritized Sweeping</strong> : priorité aux états avec plus grand changement potentiel</p></li>
+<li><p><strong>Modified Policy Iteration</strong> : évaluation partielle + amélioration (compromis)</p></li>
+<li><p><strong>Gauss-Seidel Value Iteration</strong> : utilise immédiatement les nouvelles valeurs</p></li>
+<li><p><strong>Real-Time Dynamic Programming (RTDP)</strong> : focus sur états atteignables depuis état initial</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./theorie"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01_concepts_de_base.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Concepts fondamentaux du RL</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="03_monte_carlo.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Monte Carlo Methods</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#principes-fondamentaux">1. Principes fondamentaux</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">2. Value Iteration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#principe">2.1 Principe</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithme">2.2 Algorithme</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence">2.3 Convergence</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-iteration">3. Policy Iteration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.1 Principe</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.2 Algorithme</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3.3 Convergence</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparaison-value-iteration-vs-policy-iteration">4. Comparaison Value Iteration vs Policy Iteration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complexite-algorithmique">5. Complexité algorithmique</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">5.1 Value Iteration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">5.2 Policy Iteration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercices-theoriques">6. Exercices théoriques</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-1-value-iteration-sur-gridworld">Exercice 1 — Value Iteration sur gridworld</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-2-policy-evaluation-analytique">Exercice 2 — Policy Evaluation analytique</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-3-policy-improvement-step">Exercice 3 — Policy Improvement step</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-4-convergence-de-value-iteration">Exercice 4 — Convergence de Value Iteration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-5-nombre-d-iterations-necessaires">Exercice 5 — Nombre d’itérations nécessaires</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualisation-de-la-convergence">7. Visualisation de la convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations-du-dynamic-programming">8. Limitations du Dynamic Programming</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#points-cles-a-retenir">9. Points clés à retenir</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extensions-et-variantes">10. Extensions et variantes</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Béria C. Kalpélbé
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

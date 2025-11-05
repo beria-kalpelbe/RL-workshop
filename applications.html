@@ -1,0 +1,585 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Applications du RL &#8212; Atelier : Apprentissage par Renforcement (RL)</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'applications';</script>
+    <link rel="canonical" href="/RL-workshop/applications.html" />
+    <link rel="icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Références bibliographiques et ressources" href="ressources.html" />
+    <link rel="prev" title="CartPole — Apprentissage par renforcement avec approximation de fonctions" href="pratiques/coding_session.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Introduction à l’Apprentissage par Renforcement
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="theorie/01_concepts_de_base.html">1. Concepts fondamentaux du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theorie/02_dynamic_programming.html">2. Dynamic Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theorie/03_monte_carlo.html">3. Monte Carlo methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theorie/04_td_learning.html">4. TD, SARSA, Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theorie/05_function_approximation.html">5. Approximation &amp; généralisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theorie/06_policy_gradients.html">6. Policy Gradient methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theorie/07_deep_rl.html">7. Deep Reinforcement Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pratiques/coding_session.html">8. Etude de cas: CartPole</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">9. Applications avancées du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ressources.html">Références et ressources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/applications.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Applications du RL</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#robotique-et-controle-intelligent">1. Robotique et Contrôle Intelligent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#agriculture-et-gestion-des-ressources-naturelles">2. Agriculture et Gestion des Ressources Naturelles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sante-et-medecine">3. Santé et Médecine</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#energie-et-environnement">4. Énergie et Environnement</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transport-et-mobilite">5. Transport et Mobilité</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#education-et-formation">6. Éducation et Formation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="applications-du-rl">
+<h1>Applications du RL<a class="headerlink" href="#applications-du-rl" title="Link to this heading">#</a></h1>
+<p>Le <strong>Reinforcement Learning (RL)</strong> est une branche de l’intelligence artificielle où un <em>agent</em> apprend à interagir avec un environnement pour maximiser une récompense cumulative.<br />
+Cette approche a transformé plusieurs domaines : de la robotique à la médecine, en passant par l’agriculture et la gestion des ressources.</p>
+<p>Dans cette section, nous discutons des <strong>principales applications du RL</strong>, et proposons une réflexion sur ses <strong>possibilités au Tchad</strong>, en identifiant pour chaque domaine les éléments fondamentaux : <strong>agent</strong>, <strong>états</strong>, <strong>actions</strong> et <strong>récompense</strong>.</p>
+<hr class="docutils" />
+<section id="robotique-et-controle-intelligent">
+<h2>1. Robotique et Contrôle Intelligent<a class="headerlink" href="#robotique-et-controle-intelligent" title="Link to this heading">#</a></h2>
+<p>Les robots apprennent à marcher, voler ou manipuler des objets via le RL. Par exemple, le robot <strong>Boston Dynamics Atlas</strong> ou les drones d’inspection industriels utilisent des politiques apprises par essais et erreurs.</p>
+<ul class="simple">
+<li><p><strong>Agent :</strong> le robot ou le bras manipulateur</p></li>
+<li><p><strong>États :</strong> positions articulaires, vitesses, orientation spatiale, capteurs</p></li>
+<li><p><strong>Actions :</strong> couples moteurs, trajectoires, mouvements articulaires</p></li>
+<li><p><strong>Récompense :</strong> distance à l’objectif, stabilité, économie d’énergie</p></li>
+</ul>
+<p>Le RL peut être appliqué à la <strong>robotique agricole</strong>, par exemple pour des robots de pulvérisation intelligente ou de récolte ciblée.<br />
+Ces systèmes pourraient apprendre à naviguer entre les rangées de culture et ajuster la dose d’eau ou de pesticide selon les conditions locales.</p>
+</section>
+<hr class="docutils" />
+<section id="agriculture-et-gestion-des-ressources-naturelles">
+<h2>2. Agriculture et Gestion des Ressources Naturelles<a class="headerlink" href="#agriculture-et-gestion-des-ressources-naturelles" title="Link to this heading">#</a></h2>
+<p>Le RL est utilisé pour <strong>optimiser l’irrigation, la fertilisation et la gestion des sols</strong>.<br />
+Par exemple, <strong>Google DeepMind</strong> a appliqué le RL pour réduire la consommation énergétique de leurs centres de données, un principe similaire applicable à la gestion de l’eau agricole.</p>
+<ul class="simple">
+<li><p><strong>Agent :</strong> système d’irrigation intelligent</p></li>
+<li><p><strong>États :</strong> humidité du sol, température, prévisions météo</p></li>
+<li><p><strong>Actions :</strong> ouvrir/fermer les vannes, ajuster les volumes d’eau</p></li>
+<li><p><strong>Récompense :</strong> rendement maximisé et minimisation de l’eau utilisée</p></li>
+</ul>
+<p>Dans un pays où l’eau est une ressource rare, le RL peut aider à concevoir un <strong>système d’irrigation autonome</strong> piloté par données météorologiques locales et capteurs de sol.<br />
+Cela pourrait grandement améliorer la productivité agricole tout en préservant l’eau dans les zones semi-arides.</p>
+</section>
+<hr class="docutils" />
+<section id="sante-et-medecine">
+<h2>3. Santé et Médecine<a class="headerlink" href="#sante-et-medecine" title="Link to this heading">#</a></h2>
+<p>Le RL est utilisé pour la <strong>planification de traitements</strong>, la <strong>découverte de médicaments</strong> et la <strong>robotique chirurgicale</strong>.<br />
+Un exemple célèbre est l’optimisation de la <strong>dose d’insuline chez les patients diabétiques</strong> via le RL.</p>
+<ul class="simple">
+<li><p><strong>Agent :</strong> algorithme de traitement personnalisé</p></li>
+<li><p><strong>États :</strong> niveau de glucose, dose précédente, rythme cardiaque</p></li>
+<li><p><strong>Actions :</strong> ajustement de la dose d’insuline</p></li>
+<li><p><strong>Récompense :</strong> stabilité du taux de glucose, absence d’hypoglycémie</p></li>
+</ul>
+<p>Le RL pourrait être appliqué dans la <strong>télémédecine</strong> pour aider à ajuster les traitements de maladies chroniques (hypertension, diabète) à distance.<br />
+Les données collectées par mobile peuvent alimenter un modèle RL qui propose des recommandations thérapeutiques optimisées.</p>
+</section>
+<hr class="docutils" />
+<section id="energie-et-environnement">
+<h2>4. Énergie et Environnement<a class="headerlink" href="#energie-et-environnement" title="Link to this heading">#</a></h2>
+<p>Le RL est largement utilisé pour <strong>optimiser la production et la distribution d’énergie</strong>, notamment dans les <strong>micro-réseaux</strong> et les <strong>systèmes solaires autonomes</strong>.</p>
+<ul class="simple">
+<li><p><strong>Agent :</strong> système de contrôle d’énergie</p></li>
+<li><p><strong>États :</strong> niveau de batterie, demande, ensoleillement</p></li>
+<li><p><strong>Actions :</strong> charger/décharger, activer/désactiver certaines charges</p></li>
+<li><p><strong>Récompense :</strong> maximisation de l’autonomie énergétique</p></li>
+</ul>
+<p>Avec un fort potentiel solaire, le RL peut aider à gérer des <strong>microgrids solaires intelligents</strong> dans les zones rurales, pour distribuer l’électricité de manière optimale selon la demande et les prévisions météo.</p>
+</section>
+<hr class="docutils" />
+<section id="transport-et-mobilite">
+<h2>5. Transport et Mobilité<a class="headerlink" href="#transport-et-mobilite" title="Link to this heading">#</a></h2>
+<p>Les véhicules autonomes utilisent le RL pour la <strong>navigation</strong>, la <strong>gestion du trafic</strong> et la <strong>planification d’itinéraires</strong>.<br />
+Par exemple, Tesla et Waymo intègrent des composants d’apprentissage par renforcement pour la conduite adaptative.</p>
+<ul class="simple">
+<li><p><strong>Agent :</strong> véhicule autonome ou système de contrôle de trafic</p></li>
+<li><p><strong>États :</strong> vitesse, position, distance aux autres véhicules</p></li>
+<li><p><strong>Actions :</strong> accélérer, freiner, tourner, changer de voie</p></li>
+<li><p><strong>Récompense :</strong> sécurité et rapidité du trajet</p></li>
+</ul>
+<p>Le RL peut être appliqué pour la <strong>gestion intelligente du trafic urbain à N’Djamena</strong>, en ajustant les feux de circulation selon le flux réel, ou pour la <strong>logistique agricole</strong> (livraison de produits depuis les zones rurales).</p>
+</section>
+<hr class="docutils" />
+<section id="education-et-formation">
+<h2>6. Éducation et Formation<a class="headerlink" href="#education-et-formation" title="Link to this heading">#</a></h2>
+<p>Les systèmes de tutorat intelligents utilisent le RL pour adapter le contenu pédagogique au rythme de l’élève.<br />
+Le modèle choisit quelle activité proposer ensuite pour maximiser la progression.</p>
+<ul class="simple">
+<li><p><strong>Agent :</strong> tuteur intelligent</p></li>
+<li><p><strong>États :</strong> niveau de l’étudiant, performances précédentes</p></li>
+<li><p><strong>Actions :</strong> proposer un exercice, expliquer, donner un indice</p></li>
+<li><p><strong>Récompense :</strong> amélioration du score ou de la compréhension</p></li>
+</ul>
+<p>Le RL peut être utilisé pour <strong>personnaliser les programmes d’apprentissage</strong> dans des plateformes éducatives locales, notamment pour l’apprentissage des langues nationales et des sciences de base, afin de s’adapter au profil de chaque apprenant.</p>
+</section>
+<hr class="docutils" />
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>Le <strong>Reinforcement Learning</strong> offre un cadre puissant pour apprendre à <em>agir intelligemment dans des environnements complexes et incertains</em>.<br />
+Dans le contexte du Tchad, son application peut contribuer à :</p>
+<ul class="simple">
+<li><p>Accroître la <strong>productivité agricole</strong> grâce à l’automatisation intelligente ;</p></li>
+<li><p>Optimiser la <strong>gestion des ressources naturelles</strong> ;</p></li>
+<li><p>Améliorer l’accès à la <strong>santé et à l’éducation personnalisée</strong> ;</p></li>
+<li><p>Soutenir une <strong>transition énergétique durable</strong>.</p></li>
+</ul>
+<p>Ces opportunités nécessitent une <strong>infrastructure de données locale</strong>, des <strong>compétences en IA</strong> et des <strong>projets interdisciplinaires</strong> alliant ingénieurs, chercheurs et décideurs publics.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="pratiques/coding_session.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">CartPole — Apprentissage par renforcement avec approximation de fonctions</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ressources.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Références bibliographiques et ressources</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#robotique-et-controle-intelligent">1. Robotique et Contrôle Intelligent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#agriculture-et-gestion-des-ressources-naturelles">2. Agriculture et Gestion des Ressources Naturelles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sante-et-medecine">3. Santé et Médecine</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#energie-et-environnement">4. Énergie et Environnement</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transport-et-mobilite">5. Transport et Mobilité</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#education-et-formation">6. Éducation et Formation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Béria C. Kalpélbé
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

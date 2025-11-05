@@ -1,0 +1,1189 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Monte Carlo Methods &#8212; Atelier : Apprentissage par Renforcement (RL)</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theorie/03_monte_carlo';</script>
+    <link rel="canonical" href="/RL-workshop/theorie/03_monte_carlo.html" />
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Temporal-Difference (TD) Learning" href="04_td_learning.html" />
+    <link rel="prev" title="Dynamic Programming (DP)" href="02_dynamic_programming.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Introduction à l’Apprentissage par Renforcement
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_concepts_de_base.html">1. Concepts fondamentaux du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_dynamic_programming.html">2. Dynamic Programming</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">3. Monte Carlo methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_td_learning.html">4. TD, SARSA, Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_function_approximation.html">5. Approximation &amp; généralisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_policy_gradients.html">6. Policy Gradient methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_deep_rl.html">7. Deep Reinforcement Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pratiques/coding_session.html">8. Etude de cas: CartPole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../applications.html">9. Applications avancées du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ressources.html">Références et ressources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/theorie/03_monte_carlo.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Monte Carlo Methods</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#principe-fondamental">1. Principe fondamental</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-visit-vs-every-visit-monte-carlo">2. First-visit vs Every-visit Monte Carlo</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#first-visit-mc">2.1 First-visit MC</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#every-visit-mc">2.2 Every-visit MC</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparaison">2.3 Comparaison</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithmes">3. Algorithmes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#first-visit-mc-prediction">3.1 First-visit MC Prediction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mc-control-avec-greedy">3.2 MC Control avec ε-greedy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#incremental-implementation">4. Incremental implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#off-policy-monte-carlo">5. Off-policy Monte Carlo</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#principe">5.1 Principe</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#importance-sampling">5.2 Importance Sampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithme-off-policy-mc">5.3 Algorithme Off-policy MC</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercices-theoriques">6. Exercices théoriques</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-1-calcul-de-returns">Exercice 1 — Calcul de returns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-2-mise-a-jour-incrementale">Exercice 2 — Mise à jour incrémentale</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-3-first-visit-vs-every-visit">Exercice 3 — First-visit vs Every-visit</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-4-importance-sampling">Exercice 4 — Importance Sampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-5-mc-control-avec-greedy">Exercice 5 — MC Control avec ε-greedy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#avantages-et-limitations">7. Avantages et limitations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#avantages">7.1 Avantages</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">7.2 Limitations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#points-cles-a-retenir">8. Points clés à retenir</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparaison-avec-autres-methodes">9. Comparaison avec autres méthodes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extensions-et-variantes">10. Extensions et variantes</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="monte-carlo-methods">
+<h1>Monte Carlo Methods<a class="headerlink" href="#monte-carlo-methods" title="Link to this heading">#</a></h1>
+<p>Les méthodes <strong>Monte Carlo (MC)</strong> estiment les value functions en moyennant les <strong>returns observés</strong> sur des épisodes complets, sans nécessiter de modèle du MDP.</p>
+<hr class="docutils" />
+<section id="principe-fondamental">
+<h2>1. Principe fondamental<a class="headerlink" href="#principe-fondamental" title="Link to this heading">#</a></h2>
+<div class="important admonition">
+<p class="admonition-title">Différence clé avec Dynamic Programming</p>
+<ul class="simple">
+<li><p><strong>DP</strong> : utilise le modèle <span class="math notranslate nohighlight">\((P, R)\)</span> et les équations de Bellman pour calculer les valeurs</p></li>
+<li><p><strong>MC</strong> : apprend directement des <strong>expériences</strong> (échantillons de trajectoires)</p></li>
+</ul>
+<p><strong>Idée centrale :</strong> La value function <span class="math notranslate nohighlight">\(V^{\pi}(s)\)</span> est définie comme l’espérance du return :</p>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s) = \mathbb{E}_{\pi}[G_t | S_t = s]\]</div>
+<p>Monte Carlo <strong>estime cette espérance</strong> par la <strong>moyenne empirique</strong> des returns observés :</p>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s) \approx \frac{1}{N(s)} \sum_{i=1}^{N(s)} G_t^{(i)}\]</div>
+<p>où <span class="math notranslate nohighlight">\(N(s)\)</span> est le nombre de visites de l’état <span class="math notranslate nohighlight">\(s\)</span> et <span class="math notranslate nohighlight">\(G_t^{(i)}\)</span> le return observé à la <span class="math notranslate nohighlight">\(i\)</span>-ème visite.</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Conditions d’application</p>
+<ol class="arabic simple">
+<li><p><strong>Épisodes complets</strong> : Le MDP doit être <strong>épisodique</strong> (termine en temps fini)</p></li>
+<li><p><strong>Génération de trajectoires</strong> : Capacité à générer des épisodes selon une policy</p></li>
+<li><p><strong>Exploration</strong> : Tous les états doivent être visités (hypothèse d’exploration)</p></li>
+</ol>
+<p><strong>Avantage majeur :</strong> Pas besoin du modèle <span class="math notranslate nohighlight">\((P, R)\)</span> → <strong>model-free</strong></p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="first-visit-vs-every-visit-monte-carlo">
+<h2>2. First-visit vs Every-visit Monte Carlo<a class="headerlink" href="#first-visit-vs-every-visit-monte-carlo" title="Link to this heading">#</a></h2>
+<p>Il existe deux variantes pour compter les visites d’un état dans un épisode :</p>
+<section id="first-visit-mc">
+<h3>2.1 First-visit MC<a class="headerlink" href="#first-visit-mc" title="Link to this heading">#</a></h3>
+<div class="note admonition">
+<p class="admonition-title">First-visit Monte Carlo</p>
+<p>Pour chaque épisode :</p>
+<ul class="simple">
+<li><p>On ne compte que la <strong>première occurrence</strong> de chaque état</p></li>
+<li><p>Si un état apparaît plusieurs fois, seule la première visite contribue à l’estimation</p></li>
+</ul>
+<p><strong>Propriété :</strong> Les returns de différents épisodes sont <strong>indépendants</strong> (même état, épisodes différents)</p>
+<p><strong>Convergence :</strong> Par la loi des grands nombres, <span class="math notranslate nohighlight">\(V(s) \to V^{\pi}(s)\)</span> quand <span class="math notranslate nohighlight">\(N(s) \to \infty\)</span></p>
+</div>
+</section>
+<section id="every-visit-mc">
+<h3>2.2 Every-visit MC<a class="headerlink" href="#every-visit-mc" title="Link to this heading">#</a></h3>
+<div class="note admonition">
+<p class="admonition-title">Every-visit Monte Carlo</p>
+<p>Pour chaque épisode :</p>
+<ul class="simple">
+<li><p>On compte <strong>toutes les occurrences</strong> de chaque état</p></li>
+<li><p>Chaque visite contribue à l’estimation</p></li>
+</ul>
+<p><strong>Propriété :</strong> Les returns d’un même épisode sont <strong>corrélés</strong></p>
+<p><strong>Convergence :</strong> <span class="math notranslate nohighlight">\(V(s) \to V^{\pi}(s)\)</span> asymptotiquement (convergence garantie mais avec corrélation)</p>
+</div>
+</section>
+<section id="comparaison">
+<h3>2.3 Comparaison<a class="headerlink" href="#comparaison" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Critère</p></th>
+<th class="head"><p>First-visit</p></th>
+<th class="head"><p>Every-visit</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Comptage</strong></p></td>
+<td><p>Première occurrence seulement</p></td>
+<td><p>Toutes les occurrences</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Indépendance</strong></p></td>
+<td><p>Returns indépendants entre épisodes</p></td>
+<td><p>Returns corrélés dans un épisode</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Convergence</strong></p></td>
+<td><p>Loi des grands nombres directe</p></td>
+<td><p>Convergence asymptotique</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Variance</strong></p></td>
+<td><p>Plus faible (moins de samples corrélés)</p></td>
+<td><p>Peut être plus élevée</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Usage pratique</strong></p></td>
+<td><p>Plus courant</p></td>
+<td><p>Parfois meilleure convergence</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="algorithmes">
+<h2>3. Algorithmes<a class="headerlink" href="#algorithmes" title="Link to this heading">#</a></h2>
+<section id="first-visit-mc-prediction">
+<h3>3.1 First-visit MC Prediction<a class="headerlink" href="#first-visit-mc-prediction" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : First-visit MC Prediction
+────────────────────────────────────────────────
+Entrée : policy π à évaluer
+Sortie : V^π estimée
+
+// Initialisation
+pour chaque s ∈ S faire :
+    V(s) ← 0
+    Returns(s) ← liste vide
+fin pour
+
+// Générer et analyser des épisodes
+répéter pour chaque épisode :
+    
+    // Générer un épisode selon π
+    Générer épisode : S₀, A₀, R₁, S₁, A₁, R₂, ..., Sₜ₋₁, Aₜ₋₁, Rₜ, Sₜ
+    
+    // Calculer le return pour chaque step
+    G ← 0
+    
+    pour t = T-1, T-2, ..., 0 faire :
+        G ← γ·G + R_{t+1}
+        
+        // Vérifier si première visite
+        si S_t ∉ {S₀, S₁, ..., S_{t-1}} alors :
+            Ajouter G à Returns(S_t)
+            V(S_t) ← moyenne(Returns(S_t))
+        fin si
+    fin pour
+    
+jusqu&#39;à convergence
+
+retourner V
+</pre></div>
+</div>
+</section>
+<section id="mc-control-avec-greedy">
+<h3>3.2 MC Control avec ε-greedy<a class="headerlink" href="#mc-control-avec-greedy" title="Link to this heading">#</a></h3>
+<p>Pour apprendre une policy optimale, on estime <span class="math notranslate nohighlight">\(Q^{\pi}(s,a)\)</span> et on améliore la policy :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : Monte Carlo Control (ε-greedy)
+────────────────────────────────────────────────
+Entrée : paramètre ε &gt; 0
+Sortie : policy π ≈ π*, Q ≈ Q*
+
+// Initialisation
+pour chaque s ∈ S, a ∈ A faire :
+    Q(s,a) ← 0
+    Returns(s,a) ← liste vide
+    π(a|s) ← policy ε-greedy basée sur Q
+fin pour
+
+// Boucle d&#39;amélioration
+répéter pour chaque épisode :
+    
+    // Générer épisode selon π
+    Générer : S₀, A₀, R₁, S₁, A₁, R₂, ..., Sₜ
+    
+    // Calculer returns
+    G ← 0
+    pour t = T-1, ..., 0 faire :
+        G ← γ·G + R_{t+1}
+        
+        si (S_t, A_t) est première visite alors :
+            Ajouter G à Returns(S_t, A_t)
+            Q(S_t, A_t) ← moyenne(Returns(S_t, A_t))
+            
+            // Amélioration ε-greedy
+            a* ← argmax_a Q(S_t, a)
+            pour chaque a ∈ A faire :
+                si a = a* alors :
+                    π(a|S_t) ← 1 - ε + ε/|A|
+                sinon :
+                    π(a|S_t) ← ε/|A|
+                fin si
+            fin pour
+        fin si
+    fin pour
+    
+jusqu&#39;à convergence
+
+retourner π, Q
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="incremental-implementation">
+<h2>4. Incremental implementation<a class="headerlink" href="#incremental-implementation" title="Link to this heading">#</a></h2>
+<p>Au lieu de stocker tous les returns, on peut mettre à jour incrémentalement :</p>
+<div class="important admonition">
+<p class="admonition-title">Mise à jour incrémentale</p>
+<p>Après avoir observé le return <span class="math notranslate nohighlight">\(G\)</span> pour l’état <span class="math notranslate nohighlight">\(s\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[V(s) \leftarrow V(s) + \alpha [G - V(s)]\]</div>
+<p>où <span class="math notranslate nohighlight">\(\alpha \in (0,1]\)</span> est le <strong>learning rate</strong> (taux d’apprentissage).</p>
+<p><strong>Avantage :</strong> Pas besoin de stocker l’historique complet des returns.</p>
+<p><strong>Équivalence :</strong> Pour <span class="math notranslate nohighlight">\(\alpha = \frac{1}{N(s)}\)</span>, c’est équivalent à la moyenne arithmétique.</p>
+<p><strong>Pratique courante :</strong> Utiliser un <span class="math notranslate nohighlight">\(\alpha\)</span> constant (e.g., 0.1) pour donner plus de poids aux observations récentes.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="off-policy-monte-carlo">
+<h2>5. Off-policy Monte Carlo<a class="headerlink" href="#off-policy-monte-carlo" title="Link to this heading">#</a></h2>
+<section id="principe">
+<h3>5.1 Principe<a class="headerlink" href="#principe" title="Link to this heading">#</a></h3>
+<div class="note admonition">
+<p class="admonition-title">Off-policy learning</p>
+<p>On veut estimer <span class="math notranslate nohighlight">\(V^{\pi}\)</span> ou <span class="math notranslate nohighlight">\(Q^{\pi}\)</span> (policy <strong>cible</strong>) en utilisant des trajectoires générées par une policy différente <span class="math notranslate nohighlight">\(b\)</span> (policy <strong>comportement</strong>).</p>
+<p><strong>Motivation :</strong></p>
+<ul class="simple">
+<li><p>Explorer largement avec <span class="math notranslate nohighlight">\(b\)</span> (e.g., uniforme)</p></li>
+<li><p>Apprendre une policy optimale <span class="math notranslate nohighlight">\(\pi\)</span> (déterministe, greedy)</p></li>
+</ul>
+<p><strong>Exigence :</strong> <span class="math notranslate nohighlight">\(\pi(a|s) &gt; 0 \Rightarrow b(a|s) &gt; 0\)</span> (hypothèse de <strong>coverage</strong>)</p>
+</div>
+</section>
+<section id="importance-sampling">
+<h3>5.2 Importance Sampling<a class="headerlink" href="#importance-sampling" title="Link to this heading">#</a></h3>
+<div class="important admonition">
+<p class="admonition-title">Importance sampling ratio</p>
+<p>Pour corriger le biais dû à l’utilisation de <span class="math notranslate nohighlight">\(b\)</span> au lieu de <span class="math notranslate nohighlight">\(\pi\)</span>, on pondère par :</p>
+<div class="math notranslate nohighlight">
+\[\rho_{t:T-1} = \prod_{k=t}^{T-1} \frac{\pi(A_k|S_k)}{b(A_k|S_k)}\]</div>
+<p><strong>Ordinary importance sampling :</strong></p>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s) = \mathbb{E}_b[\rho_{t:T-1} G_t | S_t = s]\]</div>
+<p>Estimateur :</p>
+<div class="math notranslate nohighlight">
+\[V(s) = \frac{1}{N(s)} \sum_{i=1}^{N(s)} \rho_{t:T-1}^{(i)} G_t^{(i)}\]</div>
+<p><strong>Weighted importance sampling :</strong></p>
+<div class="math notranslate nohighlight">
+\[V(s) = \frac{\sum_{i=1}^{N(s)} \rho_{t:T-1}^{(i)} G_t^{(i)}}{\sum_{i=1}^{N(s)} \rho_{t:T-1}^{(i)}}\]</div>
+<p><strong>Propriété :</strong> Weighted IS a généralement <strong>moins de variance</strong> que ordinary IS.</p>
+</div>
+</section>
+<section id="algorithme-off-policy-mc">
+<h3>5.3 Algorithme Off-policy MC<a class="headerlink" href="#algorithme-off-policy-mc" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : Off-policy MC Prediction
+────────────────────────────────────────────────
+Entrée : policy cible π, policy comportement b
+Sortie : V ≈ V^π
+
+// Initialisation
+pour chaque s ∈ S faire :
+    V(s) ← 0
+    C(s) ← 0  // Somme des poids cumulés
+fin pour
+
+répéter pour chaque épisode :
+    
+    Générer épisode selon b : S₀, A₀, R₁, ..., Sₜ
+    G ← 0
+    W ← 1  // Importance sampling ratio
+    
+    pour t = T-1, ..., 0 faire :
+        G ← γ·G + R_{t+1}
+        C(S_t) ← C(S_t) + W
+        V(S_t) ← V(S_t) + (W/C(S_t))[G - V(S_t)]
+        
+        W ← W · π(A_t|S_t) / b(A_t|S_t)
+        
+        si W = 0 alors :
+            sortir de la boucle  // Trajectoire incompatible
+        fin si
+    fin pour
+    
+jusqu&#39;à convergence
+
+retourner V
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="exercices-theoriques">
+<h2>6. Exercices théoriques<a class="headerlink" href="#exercices-theoriques" title="Link to this heading">#</a></h2>
+<section id="exercice-1-calcul-de-returns">
+<h3>Exercice 1 — Calcul de returns<a class="headerlink" href="#exercice-1-calcul-de-returns" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>Un agent génère l’épisode suivant :</p>
+<div class="math notranslate nohighlight">
+\[S_0 \xrightarrow{A_0, R_1=2} S_1 \xrightarrow{A_1, R_2=5} S_2 \xrightarrow{A_2, R_3=-1} S_3 \xrightarrow{A_3, R_4=10} S_4\]</div>
+<p>avec <span class="math notranslate nohighlight">\(S_0 = s_A\)</span>, <span class="math notranslate nohighlight">\(S_1 = s_B\)</span>, <span class="math notranslate nohighlight">\(S_2 = s_A\)</span>, <span class="math notranslate nohighlight">\(S_3 = s_C\)</span>, <span class="math notranslate nohighlight">\(S_4 = \text{terminal}\)</span></p>
+<p><strong>Paramètres :</strong> <span class="math notranslate nohighlight">\(\gamma = 0.9\)</span></p>
+<p><strong>Questions :</strong></p>
+<p>a) Calculez le return <span class="math notranslate nohighlight">\(G_0\)</span> depuis le début de l’épisode</p>
+<p>b) Calculez le return <span class="math notranslate nohighlight">\(G_2\)</span> depuis le second état <span class="math notranslate nohighlight">\(s_A\)</span></p>
+<p>c) Pour <strong>first-visit MC</strong>, quels returns seraient utilisés pour mettre à jour <span class="math notranslate nohighlight">\(V(s_A)\)</span> ?</p>
+<p>d) Pour <strong>every-visit MC</strong>, quels returns seraient utilisés pour mettre à jour <span class="math notranslate nohighlight">\(V(s_A)\)</span> ?</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 1</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>a) Return depuis <span class="math notranslate nohighlight">\(t=0\)</span> :</strong></p>
+<div class="math notranslate nohighlight">
+\[G_0 = R_1 + \gamma R_2 + \gamma^2 R_3 + \gamma^3 R_4\]</div>
+<div class="math notranslate nohighlight">
+\[G_0 = 2 + 0.9 \times 5 + (0.9)^2 \times (-1) + (0.9)^3 \times 10\]</div>
+<div class="math notranslate nohighlight">
+\[G_0 = 2 + 4.5 - 0.81 + 7.29 = 12.98\]</div>
+<p class="sd-card-text"><strong>b) Return depuis <span class="math notranslate nohighlight">\(t=2\)</span> (seconde visite de <span class="math notranslate nohighlight">\(s_A\)</span>) :</strong></p>
+<div class="math notranslate nohighlight">
+\[G_2 = R_3 + \gamma R_4\]</div>
+<div class="math notranslate nohighlight">
+\[G_2 = -1 + 0.9 \times 10 = -1 + 9 = 8\]</div>
+<p class="sd-card-text"><strong>c) First-visit MC pour <span class="math notranslate nohighlight">\(s_A\)</span> :</strong></p>
+<p class="sd-card-text">État <span class="math notranslate nohighlight">\(s_A\)</span> apparaît à <span class="math notranslate nohighlight">\(t=0\)</span> (première fois) et <span class="math notranslate nohighlight">\(t=2\)</span> (deuxième fois).</p>
+<p class="sd-card-text">First-visit ne compte que la <strong>première occurrence</strong> : <span class="math notranslate nohighlight">\(t=0\)</span></p>
+<p class="sd-card-text"><strong>Return utilisé :</strong> <span class="math notranslate nohighlight">\(G_0 = 12.98\)</span></p>
+<p class="sd-card-text">Mise à jour : <span class="math notranslate nohighlight">\(V(s_A) \leftarrow \text{moyenne des } G_0 \text{ sur tous les épisodes}\)</span></p>
+<p class="sd-card-text"><strong>d) Every-visit MC pour <span class="math notranslate nohighlight">\(s_A\)</span> :</strong></p>
+<p class="sd-card-text">Every-visit compte <strong>toutes les occurrences</strong> : <span class="math notranslate nohighlight">\(t=0\)</span> et <span class="math notranslate nohighlight">\(t=2\)</span></p>
+<p class="sd-card-text"><strong>Returns utilisés :</strong> <span class="math notranslate nohighlight">\(G_0 = 12.98\)</span> et <span class="math notranslate nohighlight">\(G_2 = 8.0\)</span></p>
+<p class="sd-card-text">Mise à jour : moyenne de tous les returns observés depuis <span class="math notranslate nohighlight">\(s_A\)</span> dans cet épisode et les autres.</p>
+<p class="sd-card-text">Pour cet épisode seul : <span class="math notranslate nohighlight">\(\frac{12.98 + 8.0}{2} = 10.49\)</span></p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-2-mise-a-jour-incrementale">
+<h3>Exercice 2 — Mise à jour incrémentale<a class="headerlink" href="#exercice-2-mise-a-jour-incrementale" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>On utilise MC avec mise à jour incrémentale : <span class="math notranslate nohighlight">\(V(s) \leftarrow V(s) + \alpha[G - V(s)]\)</span></p>
+<p><strong>État initial :</strong> <span class="math notranslate nohighlight">\(V(s_1) = 5.0\)</span>, learning rate <span class="math notranslate nohighlight">\(\alpha = 0.2\)</span></p>
+<p><strong>Observations successives :</strong></p>
+<ol class="arabic simple">
+<li><p>Premier épisode : return observé <span class="math notranslate nohighlight">\(G = 12.0\)</span></p></li>
+<li><p>Deuxième épisode : return observé <span class="math notranslate nohighlight">\(G = 8.0\)</span></p></li>
+<li><p>Troisième épisode : return observé <span class="math notranslate nohighlight">\(G = 10.0\)</span></p></li>
+</ol>
+<p><strong>Calculez</strong> la valeur de <span class="math notranslate nohighlight">\(V(s_1)\)</span> après chaque mise à jour.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 2</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>Initial :</strong> <span class="math notranslate nohighlight">\(V(s_1) = 5.0\)</span></p>
+<p class="sd-card-text"><strong>Après épisode 1 :</strong> <span class="math notranslate nohighlight">\(G = 12.0\)</span></p>
+<div class="math notranslate nohighlight">
+\[V(s_1) \leftarrow 5.0 + 0.2 \times [12.0 - 5.0]\]</div>
+<div class="math notranslate nohighlight">
+\[V(s_1) \leftarrow 5.0 + 0.2 \times 7.0 = 5.0 + 1.4 = 6.4\]</div>
+<p class="sd-card-text"><strong>Après épisode 2 :</strong> <span class="math notranslate nohighlight">\(G = 8.0\)</span></p>
+<div class="math notranslate nohighlight">
+\[V(s_1) \leftarrow 6.4 + 0.2 \times [8.0 - 6.4]\]</div>
+<div class="math notranslate nohighlight">
+\[V(s_1) \leftarrow 6.4 + 0.2 \times 1.6 = 6.4 + 0.32 = 6.72\]</div>
+<p class="sd-card-text"><strong>Après épisode 3 :</strong> <span class="math notranslate nohighlight">\(G = 10.0\)</span></p>
+<div class="math notranslate nohighlight">
+\[V(s_1) \leftarrow 6.72 + 0.2 \times [10.0 - 6.72]\]</div>
+<div class="math notranslate nohighlight">
+\[V(s_1) \leftarrow 6.72 + 0.2 \times 3.28 = 6.72 + 0.656 = 7.376\]</div>
+<p class="sd-card-text"><strong>Valeurs successives :</strong></p>
+<ul class="simple">
+<li><p class="sd-card-text">Après épisode 1 : <span class="math notranslate nohighlight">\(V(s_1) = 6.4\)</span></p></li>
+<li><p class="sd-card-text">Après épisode 2 : <span class="math notranslate nohighlight">\(V(s_1) = 6.72\)</span></p></li>
+<li><p class="sd-card-text">Après épisode 3 : <span class="math notranslate nohighlight">\(V(s_1) = 7.376\)</span></p></li>
+</ul>
+<p class="sd-card-text"><strong>Observation :</strong> La valeur converge progressivement vers la moyenne des returns (ici ≈ 10).</p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-3-first-visit-vs-every-visit">
+<h3>Exercice 3 — First-visit vs Every-visit<a class="headerlink" href="#exercice-3-first-visit-vs-every-visit" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>On observe 2 épisodes pour un état <span class="math notranslate nohighlight">\(s\)</span> :</p>
+<p><strong>Épisode 1 :</strong></p>
+<ul class="simple">
+<li><p>État <span class="math notranslate nohighlight">\(s\)</span> visité aux temps <span class="math notranslate nohighlight">\(t=0\)</span> et <span class="math notranslate nohighlight">\(t=3\)</span></p></li>
+<li><p>Returns : <span class="math notranslate nohighlight">\(G_0 = 15\)</span>, <span class="math notranslate nohighlight">\(G_3 = 6\)</span></p></li>
+</ul>
+<p><strong>Épisode 2 :</strong></p>
+<ul class="simple">
+<li><p>État <span class="math notranslate nohighlight">\(s\)</span> visité au temps <span class="math notranslate nohighlight">\(t=1\)</span></p></li>
+<li><p>Return : <span class="math notranslate nohighlight">\(G_1 = 10\)</span></p></li>
+</ul>
+<p><strong>Questions :</strong></p>
+<p>a) Quelle est l’estimation <span class="math notranslate nohighlight">\(V(s)\)</span> avec <strong>first-visit MC</strong> ?</p>
+<p>b) Quelle est l’estimation <span class="math notranslate nohighlight">\(V(s)\)</span> avec <strong>every-visit MC</strong> ?</p>
+<p>c) Si la vraie valeur est <span class="math notranslate nohighlight">\(V^{\pi}(s) = 11\)</span>, quelle méthode donne la meilleure estimation ?</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 3</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>a) First-visit MC :</strong></p>
+<p class="sd-card-text">On ne compte que la <strong>première visite</strong> de chaque épisode :</p>
+<ul class="simple">
+<li><p class="sd-card-text">Épisode 1 : première visite à <span class="math notranslate nohighlight">\(t=0\)</span> → <span class="math notranslate nohighlight">\(G_0 = 15\)</span></p></li>
+<li><p class="sd-card-text">Épisode 2 : première (et unique) visite à <span class="math notranslate nohighlight">\(t=1\)</span> → <span class="math notranslate nohighlight">\(G_1 = 10\)</span></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[V_{\text{first}}(s) = \frac{15 + 10}{2} = \frac{25}{2} = 12.5\]</div>
+<p class="sd-card-text"><strong>b) Every-visit MC :</strong></p>
+<p class="sd-card-text">On compte <strong>toutes les visites</strong> :</p>
+<ul class="simple">
+<li><p class="sd-card-text">Épisode 1 : visites à <span class="math notranslate nohighlight">\(t=0\)</span> et <span class="math notranslate nohighlight">\(t=3\)</span> → <span class="math notranslate nohighlight">\(G_0 = 15\)</span>, <span class="math notranslate nohighlight">\(G_3 = 6\)</span></p></li>
+<li><p class="sd-card-text">Épisode 2 : visite à <span class="math notranslate nohighlight">\(t=1\)</span> → <span class="math notranslate nohighlight">\(G_1 = 10\)</span></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[V_{\text{every}}(s) = \frac{15 + 6 + 10}{3} = \frac{31}{3} \approx 10.33\]</div>
+<p class="sd-card-text"><strong>c) Comparaison avec <span class="math notranslate nohighlight">\(V^{\pi}(s) = 11\)</span> :</strong></p>
+<ul class="simple">
+<li><p class="sd-card-text">First-visit : <span class="math notranslate nohighlight">\(|12.5 - 11| = 1.5\)</span></p></li>
+<li><p class="sd-card-text">Every-visit : <span class="math notranslate nohighlight">\(|10.33 - 11| = 0.67\)</span></p></li>
+</ul>
+<p class="sd-card-text">Dans cet exemple, <strong>every-visit MC</strong> donne une meilleure estimation.</p>
+<p class="sd-card-text"><strong>Note :</strong> Ceci dépend des données ; asymptotiquement les deux convergent vers la vraie valeur.</p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-4-importance-sampling">
+<h3>Exercice 4 — Importance Sampling<a class="headerlink" href="#exercice-4-importance-sampling" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>Un agent génère un épisode selon une policy comportement <span class="math notranslate nohighlight">\(b\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[S_0 \xrightarrow{A_0} S_1 \xrightarrow{A_1} S_2 \text{ (terminal)}\]</div>
+<p><strong>Actions choisies :</strong> <span class="math notranslate nohighlight">\(A_0 = a_1\)</span>, <span class="math notranslate nohighlight">\(A_1 = a_2\)</span></p>
+<p><strong>Rewards :</strong> <span class="math notranslate nohighlight">\(R_1 = 5\)</span>, <span class="math notranslate nohighlight">\(R_2 = 3\)</span>, discount <span class="math notranslate nohighlight">\(\gamma = 1.0\)</span></p>
+<p><strong>Policies :</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>État</p></th>
+<th class="head"><p>Action</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\pi\)</span> (cible)</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(b\)</span> (comportement)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(S_0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(a_1\)</span></p></td>
+<td><p>0.8</p></td>
+<td><p>0.5</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(S_0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(a_2\)</span></p></td>
+<td><p>0.2</p></td>
+<td><p>0.5</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(S_1\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(a_1\)</span></p></td>
+<td><p>0.3</p></td>
+<td><p>0.6</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(S_1\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(a_2\)</span></p></td>
+<td><p>0.7</p></td>
+<td><p>0.4</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Questions :</strong></p>
+<p>a) Calculez le return <span class="math notranslate nohighlight">\(G_0\)</span></p>
+<p>b) Calculez l’importance sampling ratio <span class="math notranslate nohighlight">\(\rho_{0:1}\)</span></p>
+<p>c) Quelle est la contribution pondérée pour estimer <span class="math notranslate nohighlight">\(V^{\pi}(S_0)\)</span> ?</p>
+<p>d) Si <span class="math notranslate nohighlight">\(\rho\)</span> était très grand (e.g., 100), quel problème cela poserait-il ?</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 4</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>a) Return depuis <span class="math notranslate nohighlight">\(t=0\)</span> :</strong></p>
+<div class="math notranslate nohighlight">
+\[G_0 = R_1 + \gamma R_2 = 5 + 1.0 \times 3 = 8\]</div>
+<p class="sd-card-text"><strong>b) Importance sampling ratio :</strong></p>
+<div class="math notranslate nohighlight">
+\[\rho_{0:1} = \prod_{t=0}^{1} \frac{\pi(A_t|S_t)}{b(A_t|S_t)}\]</div>
+<div class="math notranslate nohighlight">
+\[= \frac{\pi(a_1|S_0)}{b(a_1|S_0)} \times \frac{\pi(a_2|S_1)}{b(a_2|S_1)}\]</div>
+<div class="math notranslate nohighlight">
+\[= \frac{0.8}{0.5} \times \frac{0.7}{0.4}\]</div>
+<div class="math notranslate nohighlight">
+\[= 1.6 \times 1.75 = 2.8\]</div>
+<p class="sd-card-text"><strong>c) Contribution pondérée :</strong></p>
+<p class="sd-card-text">Pour <strong>ordinary importance sampling</strong> :</p>
+<div class="math notranslate nohighlight">
+\[\text{Contribution} = \rho_{0:1} \times G_0 = 2.8 \times 8 = 22.4\]</div>
+<p class="sd-card-text">Pour <strong>weighted importance sampling</strong>, on diviserait par la somme des poids.</p>
+<p class="sd-card-text"><strong>d) Problème avec <span class="math notranslate nohighlight">\(\rho\)</span> très grand :</strong></p>
+<p class="sd-card-text">Si <span class="math notranslate nohighlight">\(\rho = 100\)</span>, la contribution serait <span class="math notranslate nohighlight">\(100 \times 8 = 800\)</span> !</p>
+<p class="sd-card-text"><strong>Problèmes :</strong></p>
+<ul class="simple">
+<li><p class="sd-card-text"><strong>Variance très élevée</strong> : une seule trajectoire domine l’estimation</p></li>
+<li><p class="sd-card-text"><strong>Instabilité</strong> : estimations très sensibles aux trajectoires rares</p></li>
+<li><p class="sd-card-text"><strong>Convergence lente</strong> : beaucoup de trajectoires nécessaires pour stabiliser</p></li>
+</ul>
+<p class="sd-card-text"><strong>Solution :</strong> Utiliser weighted importance sampling ou limiter les ratios (capping).</p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-5-mc-control-avec-greedy">
+<h3>Exercice 5 — MC Control avec ε-greedy<a class="headerlink" href="#exercice-5-mc-control-avec-greedy" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>On apprend une policy avec MC Control et stratégie ε-greedy (<span class="math notranslate nohighlight">\(\varepsilon = 0.2\)</span>, <span class="math notranslate nohighlight">\(|A| = 3\)</span> actions).</p>
+<p><strong>Q-values actuelles pour état <span class="math notranslate nohighlight">\(s\)</span> :</strong></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(Q(s, a_1) = 8.0\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(Q(s, a_2) = 12.0\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(Q(s, a_3) = 5.0\)</span></p></li>
+</ul>
+<p><strong>Questions :</strong></p>
+<p>a) Quelle est l’action greedy <span class="math notranslate nohighlight">\(a^*\)</span> ?</p>
+<p>b) Calculez <span class="math notranslate nohighlight">\(\pi(a_1|s)\)</span>, <span class="math notranslate nohighlight">\(\pi(a_2|s)\)</span>, <span class="math notranslate nohighlight">\(\pi(a_3|s)\)</span> sous la policy ε-greedy</p>
+<p>c) Vérifiez que <span class="math notranslate nohighlight">\(\sum_a \pi(a|s) = 1\)</span></p>
+<p>d) Quelle est la valeur espérée <span class="math notranslate nohighlight">\(V^{\pi}(s) = \sum_a \pi(a|s) Q(s,a)\)</span> ?</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 5</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>a) Action greedy :</strong></p>
+<div class="math notranslate nohighlight">
+\[a^* = \arg\max_a Q(s,a) = a_2 \quad \text{(car } 12.0 &gt; 8.0 &gt; 5.0\text{)}\]</div>
+<p class="sd-card-text"><strong>b) Probabilités ε-greedy :</strong></p>
+<p class="sd-card-text">La policy ε-greedy attribue :</p>
+<ul class="simple">
+<li><p class="sd-card-text">Probabilité <span class="math notranslate nohighlight">\(1 - \varepsilon + \frac{\varepsilon}{|A|}\)</span> à l’action greedy</p></li>
+<li><p class="sd-card-text">Probabilité <span class="math notranslate nohighlight">\(\frac{\varepsilon}{|A|}\)</span> aux autres actions</p></li>
+</ul>
+<p class="sd-card-text">Avec <span class="math notranslate nohighlight">\(\varepsilon = 0.2\)</span> et <span class="math notranslate nohighlight">\(|A| = 3\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[\pi(a_2|s) = 1 - 0.2 + \frac{0.2}{3} = 0.8 + 0.0667 = 0.8667\]</div>
+<div class="math notranslate nohighlight">
+\[\pi(a_1|s) = \frac{0.2}{3} = 0.0667\]</div>
+<div class="math notranslate nohighlight">
+\[\pi(a_3|s) = \frac{0.2}{3} = 0.0667\]</div>
+<p class="sd-card-text"><strong>c) Vérification :</strong></p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\sum_a \pi(a|s) = 0.8667 + 0.0667 + 0.0667 = 1.0001 \approx 1$$ ✓\\(Petite erreur d'arrondi acceptable)\\**d) Valeur espérée sous $\pi$ :**\\$$V^{\pi}(s) = \sum_a \pi(a|s) Q(s,a)\end{aligned}\end{align} \]</div>
+<div class="math notranslate nohighlight">
+\[= 0.0667 \times 8.0 + 0.8667 \times 12.0 + 0.0667 \times 5.0\]</div>
+<div class="math notranslate nohighlight">
+\[= 0.534 + 10.40 + 0.334\]</div>
+<div class="math notranslate nohighlight">
+\[= 11.27\]</div>
+<p class="sd-card-text">La policy ε-greedy atteint environ 94% de la valeur optimale (12.0) tout en maintenant l’exploration.</p>
+</div>
+</details></section>
+</section>
+<hr class="docutils" />
+<section id="avantages-et-limitations">
+<h2>7. Avantages et limitations<a class="headerlink" href="#avantages-et-limitations" title="Link to this heading">#</a></h2>
+<section id="avantages">
+<h3>7.1 Avantages<a class="headerlink" href="#avantages" title="Link to this heading">#</a></h3>
+<div class="note admonition">
+<p class="admonition-title">Points forts de Monte Carlo</p>
+<p>✅ <strong>Model-free</strong> : Pas besoin de <span class="math notranslate nohighlight">\(P(s'|s,a)\)</span> ni <span class="math notranslate nohighlight">\(R(s,a)\)</span></p>
+<p>✅ <strong>Estimation non biaisée</strong> : Moyenne directe des returns observés</p>
+<p>✅ <strong>Simple conceptuellement</strong> : Intuition claire (moyenne d’expériences)</p>
+<p>✅ <strong>Applicable aux MDPs avec modèle inconnu</strong> : Apprentissage par interaction</p>
+<p>✅ <strong>Peut se concentrer sur états importants</strong> : Pas besoin de balayer tout l’espace</p>
+<p>✅ <strong>Parallélisable</strong> : Générer plusieurs épisodes indépendamment</p>
+</div>
+</section>
+<section id="limitations">
+<h3>7.2 Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h3>
+<div class="warning admonition">
+<p class="admonition-title">Contraintes de Monte Carlo</p>
+<p>❌ <strong>Épisodes complets requis</strong> : Impossible pour tâches continues ou très longues</p>
+<p>❌ <strong>Variance élevée</strong> : Les returns peuvent varier beaucoup entre épisodes</p>
+<p>❌ <strong>Convergence lente</strong> : Beaucoup d’épisodes nécessaires pour estimation précise</p>
+<p>❌ <strong>Pas d’apprentissage online</strong> : Doit attendre la fin de l’épisode</p>
+<p>❌ <strong>Problème d’exploration</strong> : États rarement visités → estimation imprécise</p>
+<p>❌ <strong>Off-policy peut avoir variance explosive</strong> : Importance sampling problématique</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="points-cles-a-retenir">
+<h2>8. Points clés à retenir<a class="headerlink" href="#points-cles-a-retenir" title="Link to this heading">#</a></h2>
+<div class="important admonition">
+<p class="admonition-title">Concepts essentiels</p>
+<ol class="arabic simple">
+<li><p><strong>MC = apprentissage par expérience</strong> sans modèle du MDP</p></li>
+<li><p><strong>Return empirique</strong> : Moyenne des <span class="math notranslate nohighlight">\(G_t\)</span> observés pour estimer <span class="math notranslate nohighlight">\(V^{\pi}(s)\)</span></p></li>
+<li><p><strong>First-visit vs Every-visit</strong> : Trade-off indépendance vs nombre de samples</p></li>
+<li><p><strong>Mise à jour incrémentale</strong> : <span class="math notranslate nohighlight">\(V(s) \leftarrow V(s) + \alpha[G - V(s)]\)</span></p></li>
+<li><p><strong>MC Control</strong> : Alterner génération d’épisodes et amélioration ε-greedy</p></li>
+<li><p><strong>Off-policy</strong> : Importance sampling pour apprendre <span class="math notranslate nohighlight">\(\pi\)</span> depuis trajectoires de <span class="math notranslate nohighlight">\(b\)</span></p></li>
+<li><p><strong>Épisodes complets</strong> : Limitation principale de MC</p></li>
+<li><p><strong>Variance élevée</strong> : Convergence plus lente que méthodes bootstrapping</p></li>
+</ol>
+</div>
+</section>
+<hr class="docutils" />
+<section id="comparaison-avec-autres-methodes">
+<h2>9. Comparaison avec autres méthodes<a class="headerlink" href="#comparaison-avec-autres-methodes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Méthode</p></th>
+<th class="head"><p>Modèle requis</p></th>
+<th class="head"><p>Bootstrap</p></th>
+<th class="head"><p>Épisodes complets</p></th>
+<th class="head"><p>Variance</p></th>
+<th class="head"><p>Biais</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>DP</strong></p></td>
+<td><p>✅ Oui</p></td>
+<td><p>✅ Oui</p></td>
+<td><p>❌ Non</p></td>
+<td><p>Faible</p></td>
+<td><p>Aucun</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>MC</strong></p></td>
+<td><p>❌ Non</p></td>
+<td><p>❌ Non</p></td>
+<td><p>✅ Oui</p></td>
+<td><p>Élevée</p></td>
+<td><p>Aucun</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>TD</strong></p></td>
+<td><p>❌ Non</p></td>
+<td><p>✅ Oui</p></td>
+<td><p>❌ Non</p></td>
+<td><p>Moyenne</p></td>
+<td><p>Faible</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Bootstrapping</strong> = utiliser des estimations pour mettre à jour d’autres estimations (ex: utiliser <span class="math notranslate nohighlight">\(V(s')\)</span> pour estimer <span class="math notranslate nohighlight">\(V(s)\)</span>).</p>
+<p>MC n’utilise <strong>pas</strong> de bootstrapping → attends les vrais returns <span class="math notranslate nohighlight">\(G_t\)</span>.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="extensions-et-variantes">
+<h2>10. Extensions et variantes<a class="headerlink" href="#extensions-et-variantes" title="Link to this heading">#</a></h2>
+<div class="note admonition">
+<p class="admonition-title">Développements avancés</p>
+<ul class="simple">
+<li><p><strong>Batch MC</strong> : Mettre à jour toutes les valeurs après plusieurs épisodes</p></li>
+<li><p><strong>Monte Carlo Tree Search (MCTS)</strong> : Planification avec simulations MC (AlphaGo)</p></li>
+<li><p><strong>Gradient MC</strong> : Utiliser MC avec approximateurs de fonctions</p></li>
+<li><p><strong>Eligibility traces</strong> : Combiner MC et TD (TD(λ), prochains chapitres)</p></li>
+<li><p><strong>Per-decision importance sampling</strong> : Réduire variance en off-policy</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./theorie"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="02_dynamic_programming.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Dynamic Programming (DP)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="04_td_learning.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Temporal-Difference (TD) Learning</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#principe-fondamental">1. Principe fondamental</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-visit-vs-every-visit-monte-carlo">2. First-visit vs Every-visit Monte Carlo</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#first-visit-mc">2.1 First-visit MC</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#every-visit-mc">2.2 Every-visit MC</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparaison">2.3 Comparaison</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithmes">3. Algorithmes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#first-visit-mc-prediction">3.1 First-visit MC Prediction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mc-control-avec-greedy">3.2 MC Control avec ε-greedy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#incremental-implementation">4. Incremental implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#off-policy-monte-carlo">5. Off-policy Monte Carlo</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#principe">5.1 Principe</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#importance-sampling">5.2 Importance Sampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithme-off-policy-mc">5.3 Algorithme Off-policy MC</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercices-theoriques">6. Exercices théoriques</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-1-calcul-de-returns">Exercice 1 — Calcul de returns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-2-mise-a-jour-incrementale">Exercice 2 — Mise à jour incrémentale</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-3-first-visit-vs-every-visit">Exercice 3 — First-visit vs Every-visit</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-4-importance-sampling">Exercice 4 — Importance Sampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-5-mc-control-avec-greedy">Exercice 5 — MC Control avec ε-greedy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#avantages-et-limitations">7. Avantages et limitations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#avantages">7.1 Avantages</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">7.2 Limitations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#points-cles-a-retenir">8. Points clés à retenir</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparaison-avec-autres-methodes">9. Comparaison avec autres méthodes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extensions-et-variantes">10. Extensions et variantes</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Béria C. Kalpélbé
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

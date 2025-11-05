@@ -1,0 +1,988 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Concepts fondamentaux du RL &#8212; Atelier : Apprentissage par Renforcement (RL)</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theorie/01_concepts_de_base';</script>
+    <link rel="canonical" href="/RL-workshop/theorie/01_concepts_de_base.html" />
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dynamic Programming (DP)" href="02_dynamic_programming.html" />
+    <link rel="prev" title="Introduction à l’Apprentissage par Renforcement" href="../intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Introduction à l’Apprentissage par Renforcement
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">1. Concepts fondamentaux du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_dynamic_programming.html">2. Dynamic Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_monte_carlo.html">3. Monte Carlo methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_td_learning.html">4. TD, SARSA, Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_function_approximation.html">5. Approximation &amp; généralisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_policy_gradients.html">6. Policy Gradient methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_deep_rl.html">7. Deep Reinforcement Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pratiques/coding_session.html">8. Etude de cas: CartPole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../applications.html">9. Applications avancées du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ressources.html">Références et ressources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/theorie/01_concepts_de_base.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Concepts fondamentaux du RL</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vue-d-ensemble">1. Vue d’ensemble</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#boucle-d-interaction-agentenvironment">2. Boucle d’interaction agent–environment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploration-vs-exploitation">3. Exploration vs Exploitation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#strategies-courantes">Stratégies courantes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decroissance-de-l-exploration">Décroissance de l’exploration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">4. Value Iteration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-evaluation-et-policy-improvement">5. Policy Evaluation et Policy Improvement</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-evaluation">Policy Evaluation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-improvement">Policy Improvement</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercices-theoriques">6. Exercices théoriques</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-1-calcul-de-return">Exercice 1 — Calcul de return</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-2-policy-evaluation-calcul-matriciel">Exercice 2 — Policy Evaluation (calcul matriciel)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-3-bellman-equation-verification">Exercice 3 — Bellman Equation (vérification)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-4-optimal-policy">Exercice 4 — Optimal Policy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-5-td-error-et-bellman-residual">Exercice 5 — TD Error et Bellman Residual</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resume">7. Résumé</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="concepts-fondamentaux-du-rl">
+<h1>Concepts fondamentaux du RL<a class="headerlink" href="#concepts-fondamentaux-du-rl" title="Link to this heading">#</a></h1>
+<p>Ce chapitre introduit les bases conceptuelles du Reinforcement Learning (RL) en combinant <strong>intuition</strong>, <strong>formalisme mathématique</strong>, et <strong>pseudocode</strong> pour une compréhension à la fois théorique et pratique.</p>
+<hr class="docutils" />
+<section id="vue-d-ensemble">
+<h2>1. Vue d’ensemble<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading">#</a></h2>
+<div class="tip admonition">
+<p class="admonition-title">Intuition</p>
+<p>Un <strong>agent</strong> interagit avec un <strong>environment</strong> en observant un <strong>state</strong> <span class="math notranslate nohighlight">\(s\)</span>, en choisissant une <strong>action</strong> <span class="math notranslate nohighlight">\(a\)</span>, et en recevant une <strong>reward</strong> <span class="math notranslate nohighlight">\(r\)</span> ainsi qu’un nouvel état <span class="math notranslate nohighlight">\(s'\)</span>.</p>
+<p>L’objectif est d’apprendre une <strong>policy</strong> <span class="math notranslate nohighlight">\(\pi(a|s)\)</span> maximisant la somme des rewards futures.</p>
+</div>
+<p><img alt="MDP figure" src="../_images/mdp.png" /></p>
+<div class="important admonition">
+<p class="admonition-title">Formulation mathématique</p>
+<p>Un <strong>Processus de Décision de Markov (MDP)</strong> est défini par le quintuplet :</p>
+<div class="math notranslate nohighlight">
+\[(S, A, P, R, \gamma)\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(S\)</span> : ensemble (fini ou infini) des <strong>states</strong></p></li>
+<li><p><span class="math notranslate nohighlight">\(A\)</span> : ensemble (fini ou infini) des <strong>actions</strong></p></li>
+<li><p><span class="math notranslate nohighlight">\(P : S \times A \times S \to [0,1]\)</span> : <strong>fonction de transition</strong></p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(P(s'|s,a)\)</span> = probabilité d’atteindre <span class="math notranslate nohighlight">\(s'\)</span> depuis <span class="math notranslate nohighlight">\(s\)</span> en exécutant <span class="math notranslate nohighlight">\(a\)</span></p></li>
+<li><p>Propriété : <span class="math notranslate nohighlight">\(\sum_{s' \in S} P(s'|s,a) = 1\)</span> pour tout <span class="math notranslate nohighlight">\((s,a)\)</span></p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(R : S \times A \to \mathbb{R}\)</span> : <strong>fonction de reward</strong></p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(R(s,a)\)</span> = reward espérée en exécutant <span class="math notranslate nohighlight">\(a\)</span> dans <span class="math notranslate nohighlight">\(s\)</span></p></li>
+<li><p>Variante : <span class="math notranslate nohighlight">\(R(s,a,s')\)</span> pour des rewards dépendant de la transition</p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(\gamma \in [0,1]\)</span> : <strong>discount factor</strong></p></li>
+</ul>
+<p>On peut aussi définir <span class="math notranslate nohighlight">\(P(s',r|s,a)\)</span> comme distribution conjointe sur les transitions et les rewards.</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Hypothèse de Markov</p>
+<p>La probabilité de transition ne dépend que du <strong>state actuel</strong> et de l’<strong>action choisie</strong>, pas de l’historique :</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{P}(S_{t+1}=s', R_{t+1}=r | S_t=s, A_t=a, S_{t-1}, A_{t-1}, \ldots, S_0, A_0)\]</div>
+<div class="math notranslate nohighlight">
+\[= \mathbb{P}(S_{t+1}=s', R_{t+1}=r | S_t=s, A_t=a)\]</div>
+<p>Cette propriété simplifie énormément l’analyse mathématique et permet l’existence de solutions optimales stationnaires.</p>
+</div>
+<img src= "https://imgs.search.brave.com/M7dyYhd84YRqccKC6mEh7V9ShR0R-6QvNrpKHVBBX0A/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9kczA1/NXV6ZXRhb2JiLmNs/b3VkZnJvbnQubmV0/L2JyaW9jaGUvdXBs/b2Fkcy9ZNDFsTDkx/emJnLWJpZ2dlci1t/YXJrb3YtY2hhaW4u/cG5nP3dpZHRoPTEy/MDA" width="100%">
+<p>Le <strong>return</strong> à l’instant <span class="math notranslate nohighlight">\(t\)</span> est :</p>
+<div class="math notranslate nohighlight">
+\[G_t = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}\]</div>
+<p>L’objectif de l’agent est de maximiser <span class="math notranslate nohighlight">\(\mathbb{E}[G_t]\)</span>.</p>
+<p>Les <strong>value functions</strong> sont :</p>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s) = \mathbb{E}_{\pi}[G_t | S_t=s]\]</div>
+<div class="math notranslate nohighlight">
+\[Q^{\pi}(s,a) = \mathbb{E}_{\pi}[G_t | S_t=s, A_t=a]\]</div>
+<p>Elles satisfont les <strong>équations de Bellman</strong> :</p>
+<div class="math notranslate nohighlight">
+\[V^{\pi}(s) = \sum_a \pi(a|s) \sum_{s',r} P(s',r|s,a) [r + \gamma V^{\pi}(s')]\]</div>
+<div class="math notranslate nohighlight">
+\[Q^{\pi}(s,a) = \sum_{s',r} P(s',r|s,a) [r + \gamma \sum_{a'} \pi(a'|s') Q^{\pi}(s',a')]\]</div>
+<p>Une <strong>optimal policy</strong> <span class="math notranslate nohighlight">\(\pi^*\)</span> maximise <span class="math notranslate nohighlight">\(V^{\pi}(s)\)</span> pour tout <span class="math notranslate nohighlight">\(s\)</span>. On note <span class="math notranslate nohighlight">\(V^*\)</span> et <span class="math notranslate nohighlight">\(Q^*\)</span> les fonctions optimales correspondantes.</p>
+</section>
+<hr class="docutils" />
+<section id="boucle-d-interaction-agentenvironment">
+<h2>2. Boucle d’interaction agent–environment<a class="headerlink" href="#boucle-d-interaction-agentenvironment" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : Boucle d&#39;apprentissage RL
+──────────────────────────────────────────────
+Entrée : environment E, policy initiale π
+Sortie : policy améliorée π*
+
+pour chaque episode faire :
+    s ← initialiser_état(E)
+    terminé ← FAUX
+    
+    tant que non terminé faire :
+        a ← sélectionner_action(s, π)
+        (s&#39;, r, terminé) ← E.step(a)
+        
+        mettre_à_jour(π, s, a, r, s&#39;)
+        
+        s ← s&#39;
+    fin tant que
+fin pour
+
+retourner π
+</pre></div>
+</div>
+<p>Cette boucle illustre le cycle d’apprentissage fondamental : <strong>observation → décision → mise à jour</strong>. Tous les algorithmes de RL se basent sur cette structure, avec des variations dans la fonction <strong>mettre_à_jour</strong> (Q-learning, SARSA, Policy Gradient, etc.).</p>
+</section>
+<hr class="docutils" />
+<section id="exploration-vs-exploitation">
+<h2>3. Exploration vs Exploitation<a class="headerlink" href="#exploration-vs-exploitation" title="Link to this heading">#</a></h2>
+<p><strong>Le dilemme fondamental du RL :</strong> faut-il explorer de nouvelles actions pour découvrir de meilleures stratégies, ou exploiter les connaissances actuelles pour maximiser les rewards ?</p>
+<section id="strategies-courantes">
+<h3>Stratégies courantes<a class="headerlink" href="#strategies-courantes" title="Link to this heading">#</a></h3>
+<p><strong>ε-greedy</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>avec probabilité ε :
+    a ← action_aléatoire()
+sinon :
+    a ← argmax_a&#39; Q(s, a&#39;)
+</pre></div>
+</div>
+<p><strong>Softmax / Boltzmann</strong></p>
+<p>La probabilité de choisir l’action <span class="math notranslate nohighlight">\(a\)</span> est :</p>
+<div class="math notranslate nohighlight">
+\[\pi(a|s) = \frac{\exp(Q(s,a)/\tau)}{\sum_{a'} \exp(Q(s,a')/\tau)}\]</div>
+<p>où <span class="math notranslate nohighlight">\(\tau &gt; 0\)</span> contrôle la <strong>temperature</strong> (niveau d’exploration).</p>
+</section>
+<section id="decroissance-de-l-exploration">
+<h3>Décroissance de l’exploration<a class="headerlink" href="#decroissance-de-l-exploration" title="Link to this heading">#</a></h3>
+<p>Pour réduire progressivement l’exploration :</p>
+<p><strong>Décroissance exponentielle :</strong>
+<span class="math notranslate nohighlight">\(\varepsilon_t = \varepsilon_0 \cdot e^{-kt}\)</span></p>
+<p><strong>Décroissance linéaire :</strong>
+<span class="math notranslate nohighlight">\(\varepsilon_t = \max(\varepsilon_{min}, \varepsilon_0 - kt)\)</span></p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="value-iteration">
+<h2>4. Value Iteration<a class="headerlink" href="#value-iteration" title="Link to this heading">#</a></h2>
+<p>L’algorithme <strong>Value Iteration</strong> calcule la value function optimale <span class="math notranslate nohighlight">\(V^*\)</span> :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : Value Iteration
+──────────────────────────────────────────────
+Entrée : MDP (S, A, P, R, γ), seuil θ
+Sortie : V* ≈ value function optimale
+
+initialiser V(s) ← 0 pour tout s ∈ S
+
+répéter :
+    Δ ← 0
+    pour chaque état s ∈ S faire :
+        v ← V(s)
+        V(s) ← max_a Σ_{s&#39;,r} P(s&#39;,r|s,a)[r + γV(s&#39;)]
+        Δ ← max(Δ, |v - V(s)|)
+    fin pour
+jusqu&#39;à Δ &lt; θ
+
+retourner V
+</pre></div>
+</div>
+<p><strong>Théorème :</strong> Value Iteration converge vers <span class="math notranslate nohighlight">\(V^*\)</span> en temps polynomial.</p>
+</section>
+<hr class="docutils" />
+<section id="policy-evaluation-et-policy-improvement">
+<h2>5. Policy Evaluation et Policy Improvement<a class="headerlink" href="#policy-evaluation-et-policy-improvement" title="Link to this heading">#</a></h2>
+<section id="policy-evaluation">
+<h3>Policy Evaluation<a class="headerlink" href="#policy-evaluation" title="Link to this heading">#</a></h3>
+<p>Évaluer une policy fixée <span class="math notranslate nohighlight">\(\pi\)</span> :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : Policy Evaluation (itératif)
+──────────────────────────────────────────────
+Entrée : policy π, seuil θ
+Sortie : V^π
+
+initialiser V(s) ← 0 pour tout s ∈ S
+
+répéter :
+    Δ ← 0
+    pour chaque état s ∈ S faire :
+        v ← V(s)
+        V(s) ← Σ_a π(a|s) Σ_{s&#39;,r} P(s&#39;,r|s,a)[r + γV(s&#39;)]
+        Δ ← max(Δ, |v - V(s)|)
+    fin pour
+jusqu&#39;à Δ &lt; θ
+
+retourner V
+</pre></div>
+</div>
+</section>
+<section id="policy-improvement">
+<h3>Policy Improvement<a class="headerlink" href="#policy-improvement" title="Link to this heading">#</a></h3>
+<p>Améliorer la policy de manière gloutonne (greedy) :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : Policy Improvement
+──────────────────────────────────────────────
+Entrée : V^π (value function de π)
+Sortie : π&#39; (policy améliorée)
+
+pour chaque état s ∈ S faire :
+    π&#39;(s) ← argmax_a Σ_{s&#39;,r} P(s&#39;,r|s,a)[r + γV^π(s&#39;)]
+fin pour
+
+retourner π&#39;
+</pre></div>
+</div>
+<p><strong>Théorème de Policy Improvement :</strong> <span class="math notranslate nohighlight">\(V^{\pi'}(s) \geq V^{\pi}(s)\)</span> pour tout <span class="math notranslate nohighlight">\(s\)</span>.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="exercices-theoriques">
+<h2>6. Exercices théoriques<a class="headerlink" href="#exercices-theoriques" title="Link to this heading">#</a></h2>
+<section id="exercice-1-calcul-de-return">
+<h3>Exercice 1 — Calcul de return<a class="headerlink" href="#exercice-1-calcul-de-return" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>Considérons une <strong>trajectory</strong> : <span class="math notranslate nohighlight">\((s_0, a_0, r_1, s_1, a_1, r_2, s_2, a_2, r_3, s_3)\)</span> avec :</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(r_1 = 5\)</span>, <span class="math notranslate nohighlight">\(r_2 = -2\)</span>, <span class="math notranslate nohighlight">\(r_3 = 10\)</span></p></li>
+<li><p>Discount factor <span class="math notranslate nohighlight">\(\gamma = 0.9\)</span></p></li>
+</ul>
+<p><strong>Calculez à la main :</strong></p>
+<p>a) Le return <span class="math notranslate nohighlight">\(G_0\)</span> depuis <span class="math notranslate nohighlight">\(t=0\)</span></p>
+<p>b) Le return <span class="math notranslate nohighlight">\(G_1\)</span> depuis <span class="math notranslate nohighlight">\(t=1\)</span></p>
+<p>c) Le return <span class="math notranslate nohighlight">\(G_2\)</span> depuis <span class="math notranslate nohighlight">\(t=2\)</span></p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 1</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>a) Return depuis <span class="math notranslate nohighlight">\(t=0\)</span> :</strong></p>
+<div class="math notranslate nohighlight">
+\[G_0 = r_1 + \gamma r_2 + \gamma^2 r_3\]</div>
+<div class="math notranslate nohighlight">
+\[G_0 = 5 + (0.9)(-2) + (0.9)^2(10)\]</div>
+<div class="math notranslate nohighlight">
+\[G_0 = 5 - 1.8 + 8.1 = 11.3\]</div>
+<p class="sd-card-text"><strong>b) Return depuis <span class="math notranslate nohighlight">\(t=1\)</span> :</strong></p>
+<div class="math notranslate nohighlight">
+\[G_1 = r_2 + \gamma r_3\]</div>
+<div class="math notranslate nohighlight">
+\[G_1 = -2 + (0.9)(10) = -2 + 9 = 7\]</div>
+<p class="sd-card-text"><strong>c) Return depuis <span class="math notranslate nohighlight">\(t=2\)</span> :</strong></p>
+<div class="math notranslate nohighlight">
+\[G_2 = r_3 = 10\]</div>
+<p class="sd-card-text"><strong>Vérification :</strong> On doit avoir <span class="math notranslate nohighlight">\(G_0 = r_1 + \gamma G_1\)</span></p>
+<p class="sd-card-text"><span class="math notranslate nohighlight">\( 5 + 0.9 \times 7 = 5 + 6.3 = 11.3 \)</span> ✓</p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-2-policy-evaluation-calcul-matriciel">
+<h3>Exercice 2 — Policy Evaluation (calcul matriciel)<a class="headerlink" href="#exercice-2-policy-evaluation-calcul-matriciel" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>Soit un MDP à 3 états avec <span class="math notranslate nohighlight">\(\gamma = 0.8\)</span> et une policy déterministe <span class="math notranslate nohighlight">\(\pi\)</span>.</p>
+<p><strong>Matrice de transition</strong> <span class="math notranslate nohighlight">\(P^\pi\)</span> (probabilité d’aller de <span class="math notranslate nohighlight">\(s_i\)</span> à <span class="math notranslate nohighlight">\(s_j\)</span> sous <span class="math notranslate nohighlight">\(\pi\)</span>) :</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}P^\pi = \begin{pmatrix}
+0.5 &amp; 0.3 &amp; 0.2 \\
+0.1 &amp; 0.7 &amp; 0.2 \\
+0.2 &amp; 0.2 &amp; 0.6
+\end{pmatrix}\end{split}\]</div>
+<p><strong>Vecteur de rewards</strong> sous <span class="math notranslate nohighlight">\(\pi\)</span> : <span class="math notranslate nohighlight">\(R^\pi = \begin{pmatrix} 10 \\ 0 \\ -5 \end{pmatrix}\)</span></p>
+<p><strong>Calculez</strong> la value function <span class="math notranslate nohighlight">\(V^\pi\)</span> en résolvant :</p>
+<div class="math notranslate nohighlight">
+\[V^\pi = (I - \gamma P^\pi)^{-1} R^\pi\]</div>
+<p>où <span class="math notranslate nohighlight">\(I\)</span> est la matrice identité <span class="math notranslate nohighlight">\(3 \times 3\)</span>.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 2</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>Étape 1 :</strong> Calculer <span class="math notranslate nohighlight">\(I - \gamma P^\pi\)</span></p>
+<div class="math notranslate nohighlight">
+\[\begin{split}I - 0.8 P^\pi = \begin{pmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1
+\end{pmatrix} - 0.8 \begin{pmatrix}
+0.5 &amp; 0.3 &amp; 0.2 \\
+0.1 &amp; 0.7 &amp; 0.2 \\
+0.2 &amp; 0.2 &amp; 0.6
+\end{pmatrix}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}= \begin{pmatrix}
+0.6 &amp; -0.24 &amp; -0.16 \\
+-0.08 &amp; 0.44 &amp; -0.16 \\
+-0.16 &amp; -0.16 &amp; 0.52
+\end{pmatrix}\end{split}\]</div>
+<p class="sd-card-text"><strong>Étape 2 :</strong> Inverser la matrice (calcul à faire numériquement ou avec Gauss-Jordan)</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}(I - 0.8 P^\pi)^{-1} \approx \begin{pmatrix}
+2.18 &amp; 1.45 &amp; 1.09 \\
+0.73 &amp; 2.91 &amp; 1.09 \\
+1.09 &amp; 1.09 &amp; 2.55
+\end{pmatrix}\end{split}\]</div>
+<p class="sd-card-text"><strong>Étape 3 :</strong> Multiplier par <span class="math notranslate nohighlight">\(R^\pi\)</span></p>
+<div class="math notranslate nohighlight">
+\[\begin{split}V^\pi = \begin{pmatrix}
+2.18 &amp; 1.45 &amp; 1.09 \\
+0.73 &amp; 2.91 &amp; 1.09 \\
+1.09 &amp; 1.09 &amp; 2.55
+\end{pmatrix} \begin{pmatrix} 10 \\ 0 \\ -5 \end{pmatrix}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}V^\pi = \begin{pmatrix}
+2.18 \times 10 + 1.45 \times 0 + 1.09 \times (-5) \\
+0.73 \times 10 + 2.91 \times 0 + 1.09 \times (-5) \\
+1.09 \times 10 + 1.09 \times 0 + 2.55 \times (-5)
+\end{pmatrix}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}V^\pi = \begin{pmatrix}
+21.8 - 5.45 \\
+7.3 - 5.45 \\
+10.9 - 12.75
+\end{pmatrix} = \begin{pmatrix}
+16.35 \\
+1.85 \\
+-1.85
+\end{pmatrix}\end{split}\]</div>
+<p class="sd-card-text"><strong>Interprétation :</strong> L’état <span class="math notranslate nohighlight">\(s_1\)</span> a la valeur la plus élevée, tandis que <span class="math notranslate nohighlight">\(s_3\)</span> a une valeur négative.</p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-3-bellman-equation-verification">
+<h3>Exercice 3 — Bellman Equation (vérification)<a class="headerlink" href="#exercice-3-bellman-equation-verification" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>Considérons un gridworld 2×2 avec 4 états. Un agent reçoit une reward de <span class="math notranslate nohighlight">\(-1\)</span> à chaque step (sauf dans l’état terminal). Le discount factor est <span class="math notranslate nohighlight">\(\gamma = 1.0\)</span>.</p>
+<p><strong>États :</strong></p>
+<ul class="simple">
+<li><p>État 1 (terminal) : reward = 0</p></li>
+<li><p>États 2, 3, 4 (non-terminaux) : reward = -1 par transition</p></li>
+</ul>
+<p><strong>Policy uniforme</strong> : l’agent choisit chaque action disponible avec probabilité égale.</p>
+<p>Supposons que vous avez calculé : <span class="math notranslate nohighlight">\(V^\pi(1) = 0\)</span>, <span class="math notranslate nohighlight">\(V^\pi(2) = -3\)</span>, <span class="math notranslate nohighlight">\(V^\pi(3) = -2\)</span>, <span class="math notranslate nohighlight">\(V^\pi(4) = -2\)</span></p>
+<p><strong>Vérifiez</strong> que ces valeurs satisfont l’équation de Bellman pour l’état 2, sachant que depuis l’état 2 :</p>
+<ul class="simple">
+<li><p>Action “haut” → état 1 (prob. 0.5)</p></li>
+<li><p>Action “gauche” → reste en 2 (prob. 0.5)</p></li>
+</ul>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 3</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">L’équation de Bellman pour l’état 2 est :</p>
+<p class="sd-card-text"><span class="math notranslate nohighlight">\(V^\pi(2) = \sum_a \pi(a|2) \sum_{s'} P(s'|2,a)[r + \gamma V^\pi(s')]\)</span></p>
+<p class="sd-card-text">Avec une policy uniforme sur 2 actions : <span class="math notranslate nohighlight">\(\pi(a|2) = 0.5\)</span> pour chaque action.</p>
+<p class="sd-card-text"><strong>Action “haut”</strong> (mène à l’état 1, terminal) :
+<span class="math notranslate nohighlight">\(Q(2, \text{haut}) = -1 + 1.0 \times V^\pi(1) = -1 + 0 = -1\)</span></p>
+<p class="sd-card-text"><strong>Action “gauche”</strong> (reste en état 2) :
+<span class="math notranslate nohighlight">\(Q(2, \text{gauche}) = -1 + 1.0 \times V^\pi(2) = -1 + V^\pi(2)\)</span></p>
+<p class="sd-card-text">Donc :</p>
+<div class="math notranslate nohighlight">
+\[V^\pi(2) = 0.5 \times (-1) + 0.5 \times (-1 + V^\pi(2))\]</div>
+<div class="math notranslate nohighlight">
+\[V^\pi(2) = -0.5 - 0.5 + 0.5 \times V^\pi(2)\]</div>
+<div class="math notranslate nohighlight">
+\[V^\pi(2) = -1 + 0.5 \times V^\pi(2)\]</div>
+<div class="math notranslate nohighlight">
+\[0.5 \times V^\pi(2) = -1\]</div>
+<div class="math notranslate nohighlight">
+\[V^\pi(2) = -2\]</div>
+<p class="sd-card-text"><strong>Problème !</strong> La valeur donnée était <span class="math notranslate nohighlight">\(V^\pi(2) = -3\)</span>, mais le calcul montre qu’elle devrait être <span class="math notranslate nohighlight">\(-2\)</span>.</p>
+<p class="sd-card-text"><strong>Conclusion :</strong> Les valeurs fournies ne satisfont <strong>pas</strong> l’équation de Bellman pour l’état 2. Il faut recalculer.</p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-4-optimal-policy">
+<h3>Exercice 4 — Optimal Policy<a class="headerlink" href="#exercice-4-optimal-policy" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>Soit un MDP avec 2 états <span class="math notranslate nohighlight">\(\{s_1, s_2\}\)</span> et 2 actions <span class="math notranslate nohighlight">\(\{a_1, a_2\}\)</span>.</p>
+<p><strong>Q-values optimales connues :</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>État</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(Q^*(s, a_1)\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(Q^*(s, a_2)\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(s_1\)</span></p></td>
+<td><p>5.2</p></td>
+<td><p>3.8</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(s_2\)</span></p></td>
+<td><p>2.1</p></td>
+<td><p>4.5</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Questions :</strong></p>
+<p>a) Quelle est l’optimal policy déterministe <span class="math notranslate nohighlight">\(\pi^*(s)\)</span> ?</p>
+<p>b) Calculez <span class="math notranslate nohighlight">\(V^*(s_1)\)</span> et <span class="math notranslate nohighlight">\(V^*(s_2)\)</span>.</p>
+<p>c) Si on utilise une policy softmax avec <span class="math notranslate nohighlight">\(\tau = 0.5\)</span>, quelle est <span class="math notranslate nohighlight">\(\pi(a_1|s_1)\)</span> ?</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 4</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>a) Optimal policy déterministe :</strong></p>
+<p class="sd-card-text">L’optimal policy choisit l’action qui maximise la Q-value :</p>
+<div class="math notranslate nohighlight">
+\[\pi^*(s_1) = \arg\max_a Q^*(s_1, a) = a_1 \quad \text{(car } 5.2 &gt; 3.8\text{)}\]</div>
+<div class="math notranslate nohighlight">
+\[\pi^*(s_2) = \arg\max_a Q^*(s_2, a) = a_2 \quad \text{(car } 4.5 &gt; 2.1\text{)}\]</div>
+<p class="sd-card-text"><strong>b) Optimal value function :</strong></p>
+<div class="math notranslate nohighlight">
+\[V^*(s) = \max_a Q^*(s, a)\]</div>
+<div class="math notranslate nohighlight">
+\[V^*(s_1) = \max(5.2, 3.8) = 5.2\]</div>
+<div class="math notranslate nohighlight">
+\[V^*(s_2) = \max(2.1, 4.5) = 4.5\]</div>
+<p class="sd-card-text"><strong>c) Policy softmax pour <span class="math notranslate nohighlight">\(s_1\)</span> avec <span class="math notranslate nohighlight">\(\tau = 0.5\)</span> :</strong></p>
+<div class="math notranslate nohighlight">
+\[\pi(a_1|s_1) = \frac{\exp(Q^*(s_1, a_1)/\tau)}{\exp(Q^*(s_1, a_1)/\tau) + \exp(Q^*(s_1, a_2)/\tau)}\]</div>
+<div class="math notranslate nohighlight">
+\[= \frac{\exp(5.2/0.5)}{\exp(5.2/0.5) + \exp(3.8/0.5)}\]</div>
+<div class="math notranslate nohighlight">
+\[= \frac{\exp(10.4)}{\exp(10.4) + \exp(7.6)}\]</div>
+<div class="math notranslate nohighlight">
+\[= \frac{32844.7}{32844.7 + 2000.3} = \frac{32844.7}{34845} \approx 0.943\]</div>
+<p class="sd-card-text">L’agent choisira <span class="math notranslate nohighlight">\(a_1\)</span> avec ~94.3% de probabilité et <span class="math notranslate nohighlight">\(a_2\)</span> avec ~5.7%.</p>
+</div>
+</details></section>
+<hr class="docutils" />
+<section id="exercice-5-td-error-et-bellman-residual">
+<h3>Exercice 5 — TD Error et Bellman Residual<a class="headerlink" href="#exercice-5-td-error-et-bellman-residual" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Exercice</p>
+<p>Dans l’algorithme <strong>TD(0)</strong>, l’agent met à jour ses estimations avec le <strong>TD error</strong> :</p>
+<div class="math notranslate nohighlight">
+\[\delta_t = r_{t+1} + \gamma V(s_{t+1}) - V(s_t)\]</div>
+<p><strong>Scénario :</strong> Un agent observe la transition suivante :</p>
+<ul class="simple">
+<li><p>État actuel : <span class="math notranslate nohighlight">\(s_t = s_3\)</span>, avec <span class="math notranslate nohighlight">\(V(s_3) = 8.0\)</span></p></li>
+<li><p>Action effectuée : <span class="math notranslate nohighlight">\(a_t\)</span></p></li>
+<li><p>Reward obtenue : <span class="math notranslate nohighlight">\(r_{t+1} = 2.5\)</span></p></li>
+<li><p>Nouvel état : <span class="math notranslate nohighlight">\(s_{t+1} = s_5\)</span>, avec <span class="math notranslate nohighlight">\(V(s_5) = 10.0\)</span></p></li>
+<li><p>Discount factor : <span class="math notranslate nohighlight">\(\gamma = 0.95\)</span></p></li>
+</ul>
+<p><strong>Calculez :</strong></p>
+<p>a) Le TD error <span class="math notranslate nohighlight">\(\delta_t\)</span></p>
+<p>b) La nouvelle valeur <span class="math notranslate nohighlight">\(V(s_3)\)</span> après mise à jour avec learning rate <span class="math notranslate nohighlight">\(\alpha = 0.1\)</span></p>
+<p>c) Interprétez le signe du TD error</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Solution — Exercice 5</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>a) Calcul du TD error :</strong></p>
+<div class="math notranslate nohighlight">
+\[\delta_t = r_{t+1} + \gamma V(s_{t+1}) - V(s_t)\]</div>
+<div class="math notranslate nohighlight">
+\[\delta_t = 2.5 + 0.95 \times 10.0 - 8.0\]</div>
+<div class="math notranslate nohighlight">
+\[\delta_t = 2.5 + 9.5 - 8.0 = 4.0\]</div>
+<p class="sd-card-text"><strong>b) Mise à jour de la value function :</strong></p>
+<p class="sd-card-text">La règle de mise à jour TD(0) est :</p>
+<div class="math notranslate nohighlight">
+\[V(s_t) \leftarrow V(s_t) + \alpha \delta_t\]</div>
+<div class="math notranslate nohighlight">
+\[V(s_3) \leftarrow 8.0 + 0.1 \times 4.0\]</div>
+<div class="math notranslate nohighlight">
+\[V(s_3) \leftarrow 8.0 + 0.4 = 8.4\]</div>
+<p class="sd-card-text"><strong>c) Interprétation :</strong></p>
+<p class="sd-card-text">Le TD error est <strong>positif</strong> (<span class="math notranslate nohighlight">\(\delta_t = 4.0 &gt; 0\)</span>), ce qui signifie que :</p>
+<ul class="simple">
+<li><p class="sd-card-text">La reward immédiate + valeur future estimée (<span class="math notranslate nohighlight">\(2.5 + 9.5 = 12.0\)</span>) est <strong>supérieure</strong> à l’estimation actuelle (<span class="math notranslate nohighlight">\(8.0\)</span>)</p></li>
+<li><p class="sd-card-text">L’agent a sous-estimé la valeur de l’état <span class="math notranslate nohighlight">\(s_3\)</span></p></li>
+<li><p class="sd-card-text">La mise à jour <strong>augmente</strong> <span class="math notranslate nohighlight">\(V(s_3)\)</span> pour corriger cette sous-estimation</p></li>
+</ul>
+<p class="sd-card-text">Si le TD error était négatif, cela indiquerait une surestimation de la valeur.</p>
+</div>
+</details></section>
+</section>
+<hr class="docutils" />
+<section id="resume">
+<h2>7. Résumé<a class="headerlink" href="#resume" title="Link to this heading">#</a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>Concepts essentiels</strong></p>
+<ol class="arabic simple">
+<li><p><strong>MDP</strong> : Formalisation mathématique du problème RL <span class="math notranslate nohighlight">\((S, A, P, R, \gamma)\)</span></p></li>
+<li><p><strong>Value functions</strong> : <span class="math notranslate nohighlight">\(V^\pi(s)\)</span> mesure la qualité d’un état, <span class="math notranslate nohighlight">\(Q^\pi(s,a)\)</span> d’une paire état-action</p></li>
+<li><p><strong>Équations de Bellman</strong> : Relations récursives qui permettent de calculer les value functions</p></li>
+<li><p><strong>Return</strong> : <span class="math notranslate nohighlight">\(G_t = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}\)</span> — somme pondérée des rewards futures</p></li>
+<li><p><strong>Exploration/Exploitation</strong> : Dilemme central résolu par des stratégies comme ε-greedy</p></li>
+<li><p><strong>Policy Evaluation</strong> : Calcul de <span class="math notranslate nohighlight">\(V^\pi\)</span> pour une policy fixée</p></li>
+<li><p><strong>Policy Improvement</strong> : Amélioration greedy basée sur <span class="math notranslate nohighlight">\(V^\pi\)</span></p></li>
+<li><p><strong>TD Error</strong> : <span class="math notranslate nohighlight">\(\delta_t = r + \gamma V(s') - V(s)\)</span> — signal d’apprentissage fondamental</p></li>
+</ol>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./theorie"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Introduction à l’Apprentissage par Renforcement</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="02_dynamic_programming.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Dynamic Programming (DP)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vue-d-ensemble">1. Vue d’ensemble</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#boucle-d-interaction-agentenvironment">2. Boucle d’interaction agent–environment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploration-vs-exploitation">3. Exploration vs Exploitation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#strategies-courantes">Stratégies courantes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decroissance-de-l-exploration">Décroissance de l’exploration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">4. Value Iteration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-evaluation-et-policy-improvement">5. Policy Evaluation et Policy Improvement</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-evaluation">Policy Evaluation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-improvement">Policy Improvement</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercices-theoriques">6. Exercices théoriques</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-1-calcul-de-return">Exercice 1 — Calcul de return</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-2-policy-evaluation-calcul-matriciel">Exercice 2 — Policy Evaluation (calcul matriciel)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-3-bellman-equation-verification">Exercice 3 — Bellman Equation (vérification)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-4-optimal-policy">Exercice 4 — Optimal Policy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-5-td-error-et-bellman-residual">Exercice 5 — TD Error et Bellman Residual</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resume">7. Résumé</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Béria C. Kalpélbé
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

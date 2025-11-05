@@ -1,0 +1,1459 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>07 — Policy Gradient Methods (REINFORCE, Actor-Critic) &#8212; Atelier : Apprentissage par Renforcement (RL)</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theorie/06_policy_gradients';</script>
+    <link rel="canonical" href="/RL-workshop/theorie/06_policy_gradients.html" />
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="08 — Deep Reinforcement Learning (DQN, PPO, autres)" href="07_deep_rl.html" />
+    <link rel="prev" title="06 — Approximation de Fonctions &amp; Généralisation" href="05_function_approximation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Introduction à l’Apprentissage par Renforcement
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_concepts_de_base.html">1. Concepts fondamentaux du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_dynamic_programming.html">2. Dynamic Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_monte_carlo.html">3. Monte Carlo methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_td_learning.html">4. TD, SARSA, Q-Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_function_approximation.html">5. Approximation &amp; généralisation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">6. Policy Gradient methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_deep_rl.html">7. Deep Reinforcement Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pratiques/coding_session.html">8. Etude de cas: CartPole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../applications.html">9. Applications avancées du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ressources.html">Références et ressources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/theorie/06_policy_gradients.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>07 — Policy Gradient Methods (REINFORCE, Actor-Critic)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoreme-du-policy-gradient">1. Théorème du Policy Gradient</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#objectif-d-optimisation">Objectif d’Optimisation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#le-theoreme">Le Théorème</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivation-intuitive">Dérivation Intuitive</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reinforce-algorithm">2. REINFORCE Algorithm</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithme-de-base">Algorithme de Base</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parametrisations-courantes">Paramétrisations Courantes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#baseline-et-reduction-de-variance">3. Baseline et Réduction de Variance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#le-probleme-de-variance">Le Problème de Variance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction-d-une-baseline">Introduction d’une Baseline</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#choix-de-baseline-optimal">Choix de Baseline Optimal</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reinforce-avec-baseline">REINFORCE avec Baseline</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actor-critic-methods">4. Actor-Critic Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-step-actor-critic">One-Step Actor-Critic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#avantage-de-td-sur-monte-carlo">Avantage de TD sur Monte Carlo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#avantages-et-applications">5. Avantages et Applications</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercices">Exercices</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-1-calcul-du-policy-gradient">Exercice 1 : Calcul du Policy Gradient</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-2-variance-de-reinforce">Exercice 2 : Variance de REINFORCE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-3-implementation-de-reinforce">Exercice 3 : Implémentation de REINFORCE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-4-actor-critic-vs-reinforce">Exercice 4 : Actor-Critic vs REINFORCE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-5-design-d-une-gaussian-policy">Exercice 5 : Design d’une Gaussian Policy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#points-cles-a-retenir">Points Clés à Retenir</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="policy-gradient-methods-reinforce-actor-critic">
+<h1>07 — Policy Gradient Methods (REINFORCE, Actor-Critic)<a class="headerlink" href="#policy-gradient-methods-reinforce-actor-critic" title="Link to this heading">#</a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>Jusqu’à présent, nous avons vu des méthodes basées sur les <strong>fonctions de valeur</strong> (value-based methods) comme Q-Learning et DQN, qui apprennent d’abord une fonction de valeur puis en déduisent une policy (généralement greedy). Les <strong>méthodes par gradient de politique</strong> (policy gradient methods) adoptent une approche différente : elles apprennent <strong>directement</strong> une policy paramétrée <span class="math notranslate nohighlight">\(\pi(a|s;\theta)\)</span> en optimisant l’espérance du return via gradient ascent.</p>
+<div class="tip admonition">
+<p class="admonition-title">Pourquoi les Policy Gradient Methods ?</p>
+<ul class="simple">
+<li><p><strong>Actions continues</strong> : Gèrent naturellement les espaces d’actions continus (difficile pour Q-Learning)</p></li>
+<li><p><strong>Policies stochastiques</strong> : Peuvent apprendre des policies intrinsèquement stochastiques</p></li>
+<li><p><strong>Convergence</strong> : Garanties de convergence plus fortes (vers minimum local au moins)</p></li>
+<li><p><strong>Stabilité</strong> : Changements graduels de policy (pas de changements brusques comme greedy)</p></li>
+</ul>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Value-Based vs Policy-Based</p>
+<p><strong>Value-Based</strong> (Q-Learning, DQN) :</p>
+<ul class="simple">
+<li><p>Apprend <span class="math notranslate nohighlight">\(Q(s,a)\)</span> ou <span class="math notranslate nohighlight">\(V(s)\)</span></p></li>
+<li><p>Policy dérivée implicitement (argmax)</p></li>
+<li><p>Difficile pour actions continues</p></li>
+<li><p>Peut avoir des changements brusques de policy</p></li>
+</ul>
+<p><strong>Policy-Based</strong> (Policy Gradient) :</p>
+<ul class="simple">
+<li><p>Apprend directement <span class="math notranslate nohighlight">\(\pi(a|s;\theta)\)</span></p></li>
+<li><p>Optimisation explicite de la policy</p></li>
+<li><p>Naturel pour actions continues</p></li>
+<li><p>Changements graduels et stables</p></li>
+</ul>
+</div>
+</section>
+<hr class="docutils" />
+<section id="theoreme-du-policy-gradient">
+<h2>1. Théorème du Policy Gradient<a class="headerlink" href="#theoreme-du-policy-gradient" title="Link to this heading">#</a></h2>
+<section id="objectif-d-optimisation">
+<h3>Objectif d’Optimisation<a class="headerlink" href="#objectif-d-optimisation" title="Link to this heading">#</a></h3>
+<p>On cherche à maximiser l’espérance du return total :</p>
+<div class="math notranslate nohighlight">
+\[J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}[G_0] = \mathbb{E}_{\tau \sim \pi_\theta}\left[\sum_{t=0}^{T} \gamma^t R_{t+1}\right]\]</div>
+<p>où <span class="math notranslate nohighlight">\(\tau = (S_0, A_0, R_1, S_1, A_1, R_2, \ldots)\)</span> est une trajectoire générée par la policy <span class="math notranslate nohighlight">\(\pi_\theta\)</span>.</p>
+</section>
+<section id="le-theoreme">
+<h3>Le Théorème<a class="headerlink" href="#le-theoreme" title="Link to this heading">#</a></h3>
+<div class="important admonition">
+<p class="admonition-title">Policy Gradient Theorem (Sutton et al., 2000)</p>
+<p>Le gradient de l’objectif par rapport aux paramètres de la policy est :</p>
+<div class="math notranslate nohighlight">
+\[\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\left[ \sum_{t=0}^{T} \nabla_\theta \log \pi_\theta(A_t|S_t) \, G_t \right]\]</div>
+<p>où <span class="math notranslate nohighlight">\(G_t = \sum_{k=t}^{T} \gamma^{k-t} R_{k+1}\)</span> est le return depuis le temps <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<p><strong>Interprétation intuitive</strong> :</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\nabla_\theta \log \pi_\theta(A_t|S_t)\)</span> : Direction qui augmente la probabilité de l’action <span class="math notranslate nohighlight">\(A_t\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(G_t\)</span> : “Score” de cette action (return obtenu après l’avoir prise)</p></li>
+<li><p>Si <span class="math notranslate nohighlight">\(G_t\)</span> est élevé → augmenter <span class="math notranslate nohighlight">\(\pi(A_t|S_t)\)</span></p></li>
+<li><p>Si <span class="math notranslate nohighlight">\(G_t\)</span> est faible → diminuer <span class="math notranslate nohighlight">\(\pi(A_t|S_t)\)</span></p></li>
+</ul>
+</div>
+</section>
+<section id="derivation-intuitive">
+<h3>Dérivation Intuitive<a class="headerlink" href="#derivation-intuitive" title="Link to this heading">#</a></h3>
+<div class="note admonition">
+<p class="admonition-title">Pourquoi cette forme ?</p>
+<p>Le gradient <span class="math notranslate nohighlight">\(\nabla_\theta \log \pi_\theta(a|s)\)</span> a une propriété utile appelée <strong>log-derivative trick</strong> :</p>
+<div class="math notranslate nohighlight">
+\[\nabla_\theta \pi_\theta(a|s) = \pi_\theta(a|s) \nabla_\theta \log \pi_\theta(a|s)\]</div>
+<p>Cela permet de transformer le gradient d’une espérance en espérance d’un gradient, ce qui est essentiel pour l’estimation Monte Carlo.</p>
+<p><strong>Propriétés importantes</strong> :</p>
+<ul class="simple">
+<li><p>Ne nécessite pas de modèle de l’environnement</p></li>
+<li><p>Fonctionne avec des espaces d’actions discrets ou continus</p></li>
+<li><p>Peut être estimé par échantillonnage (Monte Carlo)</p></li>
+</ul>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="reinforce-algorithm">
+<h2>2. REINFORCE Algorithm<a class="headerlink" href="#reinforce-algorithm" title="Link to this heading">#</a></h2>
+<p>REINFORCE (Williams, 1992) est l’algorithme de policy gradient le plus simple, utilisant des estimations Monte Carlo du return.</p>
+<section id="algorithme-de-base">
+<h3>Algorithme de Base<a class="headerlink" href="#algorithme-de-base" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : REINFORCE (Monte Carlo Policy Gradient)
+────────────────────────────────────────────────────────
+Entrée : learning rate α, discount γ
+Sortie : policy paramétrée π(a|s;θ)
+
+// Initialisation
+Initialiser paramètres de policy θ aléatoirement
+
+// Apprentissage
+répéter pour chaque épisode :
+    
+    // Générer un épisode complet
+    Générer épisode S₀, A₀, R₁, S₁, A₁, R₂, ..., S_T
+    selon policy π(·|·;θ)
+    
+    // Mise à jour après l&#39;épisode
+    pour t = 0 à T-1 faire :
+        
+        // Calculer return depuis t
+        G_t ← 0
+        pour k = t à T-1 faire :
+            G_t ← G_t + γ^(k-t) · R_(k+1)
+        fin pour
+        
+        // Mise à jour policy gradient
+        θ ← θ + α · ∇_θ log π_θ(A_t|S_t) · G_t
+        
+    fin pour
+    
+jusqu&#39;à convergence
+
+retourner θ
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Caractéristiques de REINFORCE</p>
+<p><strong>Avantages</strong> :</p>
+<ul class="simple">
+<li><p>Simple et intuitif</p></li>
+<li><p>Unbiased gradient estimate (estimation non biaisée)</p></li>
+<li><p>Fonctionne avec actions discrètes et continues</p></li>
+<li><p>Garantie de convergence vers minimum local</p></li>
+</ul>
+<p><strong>Inconvénients</strong> :</p>
+<ul class="simple">
+<li><p><strong>Variance très élevée</strong> : Les returns <span class="math notranslate nohighlight">\(G_t\)</span> peuvent varier énormément</p></li>
+<li><p>Nécessite des épisodes complets (on-policy, Monte Carlo)</p></li>
+<li><p>Apprentissage lent dû à la haute variance</p></li>
+<li><p>Sample inefficient (besoin de nombreux épisodes)</p></li>
+</ul>
+</div>
+</section>
+<section id="parametrisations-courantes">
+<h3>Paramétrisations Courantes<a class="headerlink" href="#parametrisations-courantes" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Représentations de Policy</p>
+<p><strong>Actions Discrètes</strong> (ex: CartPole, Atari) :</p>
+<ul class="simple">
+<li><p>Softmax policy : <span class="math notranslate nohighlight">\(\pi(a|s;\theta) = \frac{\exp(h(s,a;\theta))}{\sum_{a'} \exp(h(s,a';\theta))}\)</span></p></li>
+<li><p>Réseau de neurones : <span class="math notranslate nohighlight">\(s \rightarrow\)</span> hidden layers <span class="math notranslate nohighlight">\(\rightarrow\)</span> softmax sur actions</p></li>
+</ul>
+<p><strong>Actions Continues</strong> (ex: robotique, contrôle) :</p>
+<ul class="simple">
+<li><p>Gaussian policy : <span class="math notranslate nohighlight">\(\pi(a|s;\theta) = \mathcal{N}(a|\mu_\theta(s), \sigma^2_\theta(s))\)</span></p></li>
+<li><p>Réseau de neurones produit <span class="math notranslate nohighlight">\(\mu_\theta(s)\)</span> et <span class="math notranslate nohighlight">\(\sigma_\theta(s)\)</span></p></li>
+<li><p>Log-probabilité : <span class="math notranslate nohighlight">\(\log \pi(a|s;\theta) = -\frac{1}{2}\left[\frac{(a-\mu_\theta(s))^2}{\sigma^2_\theta(s)} + \log(2\pi\sigma^2_\theta(s))\right]\)</span></p></li>
+</ul>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="baseline-et-reduction-de-variance">
+<h2>3. Baseline et Réduction de Variance<a class="headerlink" href="#baseline-et-reduction-de-variance" title="Link to this heading">#</a></h2>
+<section id="le-probleme-de-variance">
+<h3>Le Problème de Variance<a class="headerlink" href="#le-probleme-de-variance" title="Link to this heading">#</a></h3>
+<div class="danger admonition">
+<p class="admonition-title">Pourquoi la Variance est un Problème</p>
+<p>Dans REINFORCE, <span class="math notranslate nohighlight">\(G_t\)</span> peut varier énormément entre épisodes même pour le même état-action :</p>
+<ul class="simple">
+<li><p>Un épisode chanceux → <span class="math notranslate nohighlight">\(G_t\)</span> très élevé → sur-ajustement</p></li>
+<li><p>Un épisode malchanceux → <span class="math notranslate nohighlight">\(G_t\)</span> très faible → sous-estimation</p></li>
+<li><p>Résultat : Apprentissage instable et lent</p></li>
+</ul>
+<p><strong>Variance élevée</strong> → Besoin de beaucoup d’échantillons → Inefficacité</p>
+</div>
+</section>
+<section id="introduction-d-une-baseline">
+<h3>Introduction d’une Baseline<a class="headerlink" href="#introduction-d-une-baseline" title="Link to this heading">#</a></h3>
+<p>On peut soustraire une <strong>baseline</strong> <span class="math notranslate nohighlight">\(b(S_t)\)</span> du return sans introduire de biais :</p>
+<div class="math notranslate nohighlight">
+\[\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\left[\sum_t \nabla_\theta \log \pi_\theta(A_t|S_t) \left(G_t - b(S_t)\right)\right]\]</div>
+<div class="note admonition">
+<p class="admonition-title">Pourquoi la Baseline Ne Change Pas l’Espérance</p>
+<p>Preuve que soustraire <span class="math notranslate nohighlight">\(b(S_t)\)</span> ne biaise pas le gradient :</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{E}_{A_t \sim \pi}\left[\nabla_\theta \log \pi_\theta(A_t|S_t) \cdot b(S_t)\right]\]</div>
+<div class="math notranslate nohighlight">
+\[= b(S_t) \sum_{a} \pi_\theta(a|S_t) \nabla_\theta \log \pi_\theta(a|S_t)\]</div>
+<div class="math notranslate nohighlight">
+\[= b(S_t) \sum_{a} \nabla_\theta \pi_\theta(a|S_t) = b(S_t) \nabla_\theta 1 = 0\]</div>
+<p>La baseline réduit la variance sans changer l’espérance !</p>
+</div>
+</section>
+<section id="choix-de-baseline-optimal">
+<h3>Choix de Baseline Optimal<a class="headerlink" href="#choix-de-baseline-optimal" title="Link to this heading">#</a></h3>
+<div class="tip admonition">
+<p class="admonition-title">Baselines Courantes</p>
+<p><strong>1. Baseline Constante</strong> :</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(b = \bar{G}\)</span> (moyenne des returns observés)</p></li>
+<li><p>Simple mais sous-optimal</p></li>
+</ul>
+<p><strong>2. State-Dependent Baseline</strong> :</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(b(s) = V(s)\)</span> (valeur de l’état)</p></li>
+<li><p><strong>Optimal en théorie</strong> : minimise la variance</p></li>
+<li><p>Donne l’<strong>avantage</strong> : <span class="math notranslate nohighlight">\(A_t = G_t - V(S_t)\)</span></p></li>
+</ul>
+<p><strong>3. Learned Baseline</strong> :</p>
+<ul class="simple">
+<li><p>Approximer <span class="math notranslate nohighlight">\(V(s;w)\)</span> avec un réseau de neurones</p></li>
+<li><p>Mise à jour simultanée avec la policy</p></li>
+<li><p>Conduit naturellement aux méthodes Actor-Critic</p></li>
+</ul>
+</div>
+</section>
+<section id="reinforce-avec-baseline">
+<h3>REINFORCE avec Baseline<a class="headerlink" href="#reinforce-avec-baseline" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : REINFORCE avec Baseline
+──────────────────────────────────────────────────────────
+Entrée : learning rates α_θ, α_w, discount γ
+Sortie : policy π(a|s;θ), value function V(s;w)
+
+// Initialisation
+Initialiser θ et w aléatoirement
+
+// Apprentissage
+répéter pour chaque épisode :
+    
+    Générer épisode S₀, A₀, R₁, ..., S_T selon π(·|·;θ)
+    
+    pour t = 0 à T-1 faire :
+        
+        // Calculer return
+        G_t ← Σ_(k=t)^(T-1) γ^(k-t) · R_(k+1)
+        
+        // Calculer avantage (advantage)
+        δ_t ← G_t - V(S_t; w)
+        
+        // Mise à jour value function (critic)
+        w ← w + α_w · δ_t · ∇_w V(S_t; w)
+        
+        // Mise à jour policy (actor)
+        θ ← θ + α_θ · ∇_θ log π_θ(A_t|S_t) · δ_t
+        
+    fin pour
+    
+jusqu&#39;à convergence
+
+retourner θ, w
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="actor-critic-methods">
+<h2>4. Actor-Critic Methods<a class="headerlink" href="#actor-critic-methods" title="Link to this heading">#</a></h2>
+<p>Les méthodes <strong>Actor-Critic</strong> combinent le meilleur des deux mondes : policy gradient (actor) et value function approximation (critic).</p>
+<div class="important admonition">
+<p class="admonition-title">Architecture Actor-Critic</p>
+<p><strong>Actor</strong> (politique) :</p>
+<ul class="simple">
+<li><p>Paramètres : <span class="math notranslate nohighlight">\(\theta\)</span></p></li>
+<li><p>Apprend la policy <span class="math notranslate nohighlight">\(\pi(a|s;\theta)\)</span></p></li>
+<li><p>Mise à jour par policy gradient</p></li>
+</ul>
+<p><strong>Critic</strong> (critique) :</p>
+<ul class="simple">
+<li><p>Paramètres : <span class="math notranslate nohighlight">\(w\)</span></p></li>
+<li><p>Apprend la value function <span class="math notranslate nohighlight">\(V(s;w)\)</span> ou <span class="math notranslate nohighlight">\(Q(s,a;w)\)</span></p></li>
+<li><p>Mise à jour par TD learning</p></li>
+</ul>
+<p><strong>Avantage</strong> : Le critic réduit la variance du gradient en fournissant une baseline apprise.</p>
+</div>
+<section id="one-step-actor-critic">
+<h3>One-Step Actor-Critic<a class="headerlink" href="#one-step-actor-critic" title="Link to this heading">#</a></h3>
+<p>Contrairement à REINFORCE qui attend la fin de l’épisode, Actor-Critic peut faire des mises à jour <strong>à chaque step</strong> en utilisant bootstrapping (comme TD).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : One-Step Actor-Critic
+────────────────────────────────────────────────────────
+Entrée : learning rates α_θ, α_w, discount γ
+Sortie : policy π(a|s;θ), value function V(s;w)
+
+// Initialisation
+Initialiser θ et w aléatoirement
+
+// Apprentissage
+répéter pour chaque épisode :
+    Initialiser S
+    
+    répéter pour chaque step (jusqu&#39;à S terminal) :
+        
+        // Actor : sélectionner action
+        A ~ π(·|S; θ)
+        
+        // Exécuter action
+        Exécuter A, observer R, S&#39;
+        
+        // Critic : calculer TD error
+        si S&#39; est terminal alors :
+            δ ← R - V(S; w)
+        sinon :
+            δ ← R + γ·V(S&#39;; w) - V(S; w)
+        fin si
+        
+        // Mise à jour Critic (TD learning)
+        w ← w + α_w · δ · ∇_w V(S; w)
+        
+        // Mise à jour Actor (policy gradient)
+        θ ← θ + α_θ · ∇_θ log π_θ(A|S) · δ
+        
+        // Transition
+        S ← S&#39;
+        
+    jusqu&#39;à S terminal
+    
+jusqu&#39;à convergence
+
+retourner θ, w
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">REINFORCE vs Actor-Critic</p>
+<p><strong>REINFORCE</strong> :</p>
+<ul class="simple">
+<li><p>Utilise <span class="math notranslate nohighlight">\(G_t\)</span> (return complet Monte Carlo)</p></li>
+<li><p>Estimation non biaisée mais haute variance</p></li>
+<li><p>Nécessite épisodes complets</p></li>
+<li><p>Mise à jour en batch après épisode</p></li>
+</ul>
+<p><strong>Actor-Critic</strong> :</p>
+<ul class="simple">
+<li><p>Utilise <span class="math notranslate nohighlight">\(\delta_t = R + \gamma V(S') - V(S)\)</span> (TD error)</p></li>
+<li><p>Estimation biaisée mais faible variance</p></li>
+<li><p>Peut faire des mises à jour online (chaque step)</p></li>
+<li><p>Plus efficace en termes d’échantillons</p></li>
+</ul>
+</div>
+</section>
+<section id="avantage-de-td-sur-monte-carlo">
+<h3>Avantage de TD sur Monte Carlo<a class="headerlink" href="#avantage-de-td-sur-monte-carlo" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 37.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>Monte Carlo (REINFORCE)</p></th>
+<th class="head"><p>Temporal Difference (Actor-Critic)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Biais</strong></p></td>
+<td><p>Aucun (unbiased)</p></td>
+<td><p>Présent (dépend de <span class="math notranslate nohighlight">\(V\)</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Variance</strong></p></td>
+<td><p>Élevée</p></td>
+<td><p>Faible</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Vitesse</strong></p></td>
+<td><p>Lente</p></td>
+<td><p>Rapide</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Online/Offline</strong></p></td>
+<td><p>Nécessite épisodes complets</p></td>
+<td><p>Mises à jour à chaque step</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Environnements</strong></p></td>
+<td><p>Épisodiques seulement</p></td>
+<td><p>Épisodiques et continus</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="avantages-et-applications">
+<h2>5. Avantages et Applications<a class="headerlink" href="#avantages-et-applications" title="Link to this heading">#</a></h2>
+<div class="tip admonition">
+<p class="admonition-title">Avantages des Policy Gradient Methods</p>
+<p><strong>1. Actions Continues</strong> :</p>
+<ul class="simple">
+<li><p>Gère naturellement les espaces d’actions continus</p></li>
+<li><p>Essentiel pour robotique, contrôle de moteurs, etc.</p></li>
+</ul>
+<p><strong>2. Policies Stochastiques</strong> :</p>
+<ul class="simple">
+<li><p>Peut apprendre des stratégies intrinsèquement stochastiques</p></li>
+<li><p>Utile pour jeux à information partielle (ex: pierre-papier-ciseaux)</p></li>
+</ul>
+<p><strong>3. Stabilité</strong> :</p>
+<ul class="simple">
+<li><p>Changements graduels de policy (pas de changements brusques)</p></li>
+<li><p>Garanties de convergence (vers minimum local)</p></li>
+</ul>
+<p><strong>4. Simplicité</strong> :</p>
+<ul class="simple">
+<li><p>Pas besoin d’operator max (difficile en continu)</p></li>
+<li><p>Architecture neurale directe : états → probabilités d’actions</p></li>
+</ul>
+</div>
+<div class="warning admonition">
+<p class="admonition-title">Limitations</p>
+<p><strong>1. Convergence Locale</strong> :</p>
+<ul class="simple">
+<li><p>Garantie seulement vers minimum local (pas global)</p></li>
+<li><p>Sensible à l’initialisation</p></li>
+</ul>
+<p><strong>2. Sample Inefficiency</strong> :</p>
+<ul class="simple">
+<li><p>Nécessite beaucoup d’interactions avec l’environnement</p></li>
+<li><p>Surtout pour REINFORCE vanilla</p></li>
+</ul>
+<p><strong>3. Hyperparamètres Sensibles</strong> :</p>
+<ul class="simple">
+<li><p>Learning rates critiques (<span class="math notranslate nohighlight">\(\alpha_\theta\)</span>, <span class="math notranslate nohighlight">\(\alpha_w\)</span>)</p></li>
+<li><p>Nécessite tuning soigneux</p></li>
+</ul>
+<p><strong>4. Exploration</strong> :</p>
+<ul class="simple">
+<li><p>Dépend de la stochasticité de la policy</p></li>
+<li><p>Peut nécessiter mécanismes d’exploration additionnels (entropy bonus)</p></li>
+</ul>
+</div>
+</section>
+<hr class="docutils" />
+<section id="exercices">
+<h2>Exercices<a class="headerlink" href="#exercices" title="Link to this heading">#</a></h2>
+<section id="exercice-1-calcul-du-policy-gradient">
+<h3>Exercice 1 : Calcul du Policy Gradient<a class="headerlink" href="#exercice-1-calcul-du-policy-gradient" title="Link to this heading">#</a></h3>
+<p><strong>Question</strong> : Considérez une policy softmax sur deux actions <span class="math notranslate nohighlight">\(a \in \{0, 1\}\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[\pi(a|s;\theta) = \frac{\exp(\theta_a)}{\exp(\theta_0) + \exp(\theta_1)}\]</div>
+<p>avec paramètres <span class="math notranslate nohighlight">\(\theta = [\theta_0, \theta_1]^T\)</span>.</p>
+<p>(a) Calculez <span class="math notranslate nohighlight">\(\nabla_\theta \log \pi(a=0|s;\theta)\)</span>.</p>
+<p>(b) Si vous observez une trajectoire <span class="math notranslate nohighlight">\((s, a=0, G=10)\)</span>, quelle est la direction de mise à jour de <span class="math notranslate nohighlight">\(\theta\)</span> avec learning rate <span class="math notranslate nohighlight">\(\alpha=0.1\)</span> ?</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<p><strong>(a)</strong> Calcul du gradient :</p>
+<p>Pour la policy softmax :
+$<span class="math notranslate nohighlight">\(\pi(0|s;\theta) = \frac{\exp(\theta_0)}{\exp(\theta_0) + \exp(\theta_1)}\)</span>$</p>
+<p>Le log-probabilité :
+$<span class="math notranslate nohighlight">\(\log \pi(0|s;\theta) = \theta_0 - \log(\exp(\theta_0) + \exp(\theta_1))\)</span>$</p>
+<p>Gradient par rapport à <span class="math notranslate nohighlight">\(\theta_0\)</span> :
+$<span class="math notranslate nohighlight">\(\frac{\partial}{\partial \theta_0} \log \pi(0|s;\theta) = 1 - \frac{\exp(\theta_0)}{\exp(\theta_0) + \exp(\theta_1)} = 1 - \pi(0|s;\theta)\)</span>$</p>
+<p>Gradient par rapport à <span class="math notranslate nohighlight">\(\theta_1\)</span> :
+$<span class="math notranslate nohighlight">\(\frac{\partial}{\partial \theta_1} \log \pi(0|s;\theta) = 0 - \frac{\exp(\theta_1)}{\exp(\theta_0) + \exp(\theta_1)} = -\pi(1|s;\theta)\)</span>$</p>
+<p>Donc :
+$<span class="math notranslate nohighlight">\(\nabla_\theta \log \pi(0|s;\theta) = \begin{bmatrix} 1 - \pi(0|s;\theta) \\ -\pi(1|s;\theta) \end{bmatrix}\)</span>$</p>
+<p><strong>Interprétation</strong> : Le gradient augmente la probabilité de l’action choisie (0) et diminue celle de l’autre action (1).</p>
+<p><strong>(b)</strong> Mise à jour :</p>
+<div class="math notranslate nohighlight">
+\[\theta \leftarrow \theta + \alpha \cdot \nabla_\theta \log \pi(0|s;\theta) \cdot G\]</div>
+<p>Si <span class="math notranslate nohighlight">\(\theta = [0, 0]^T\)</span> initialement, alors <span class="math notranslate nohighlight">\(\pi(0|s;\theta) = \pi(1|s;\theta) = 0.5\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\nabla_\theta \log \pi(0|s;\theta) = \begin{bmatrix} 1 - 0.5 \\ -0.5 \end{bmatrix} = \begin{bmatrix} 0.5 \\ -0.5 \end{bmatrix}\end{split}\]</div>
+<p>Mise à jour :
+$<span class="math notranslate nohighlight">\(\theta \leftarrow \begin{bmatrix} 0 \\ 0 \end{bmatrix} + 0.1 \cdot \begin{bmatrix} 0.5 \\ -0.5 \end{bmatrix} \cdot 10 = \begin{bmatrix} 0.5 \\ -0.5 \end{bmatrix}\)</span>$</p>
+<p><strong>Résultat</strong> : <span class="math notranslate nohighlight">\(\theta_0\)</span> augmente (favorise action 0) et <span class="math notranslate nohighlight">\(\theta_1\)</span> diminue (défavorise action 1), car l’action 0 a donné un bon return (<span class="math notranslate nohighlight">\(G=10\)</span>).</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="exercice-2-variance-de-reinforce">
+<h3>Exercice 2 : Variance de REINFORCE<a class="headerlink" href="#exercice-2-variance-de-reinforce" title="Link to this heading">#</a></h3>
+<p><strong>Question</strong> : Expliquez pourquoi REINFORCE a une variance élevée et comment une baseline <span class="math notranslate nohighlight">\(b(s) = V(s)\)</span> réduit cette variance sans introduire de biais. Donnez un exemple numérique simple.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<p><strong>Pourquoi variance élevée ?</strong></p>
+<p>Dans REINFORCE, on utilise <span class="math notranslate nohighlight">\(G_t = \sum_{k=t}^T \gamma^{k-t} R_{k+1}\)</span> comme estimation du gradient. Même pour le même état-action, <span class="math notranslate nohighlight">\(G_t\)</span> peut varier énormément selon :</p>
+<ul class="simple">
+<li><p>Le hasard dans l’environnement</p></li>
+<li><p>Les actions futures (qui sont stochastiques)</p></li>
+<li><p>La longueur de l’épisode</p></li>
+</ul>
+<p><strong>Exemple numérique</strong> :</p>
+<p>Supposons deux épisodes depuis le même état <span class="math notranslate nohighlight">\(s\)</span> avec même action <span class="math notranslate nohighlight">\(a\)</span> :</p>
+<ul class="simple">
+<li><p>Épisode 1 : <span class="math notranslate nohighlight">\(G = 100\)</span> (chanceux)</p></li>
+<li><p>Épisode 2 : <span class="math notranslate nohighlight">\(G = 10\)</span> (malchanceux)</p></li>
+</ul>
+<p>Sans baseline :</p>
+<ul class="simple">
+<li><p>Update 1 : <span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha \cdot \nabla \log \pi(a|s) \cdot 100\)</span></p></li>
+<li><p>Update 2 : <span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha \cdot \nabla \log \pi(a|s) \cdot 10\)</span></p></li>
+</ul>
+<p>Énorme différence ! Variance <span class="math notranslate nohighlight">\(= \text{Var}(G) = \text{Var}([100, 10]) = 2025\)</span></p>
+<p><strong>Avec baseline</strong> <span class="math notranslate nohighlight">\(b(s) = V(s) = 50\)</span> (valeur moyenne de l’état) :</p>
+<ul class="simple">
+<li><p>Update 1 : <span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha \cdot \nabla \log \pi(a|s) \cdot (100 - 50) = 50\)</span></p></li>
+<li><p>Update 2 : <span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha \cdot \nabla \log \pi(a|s) \cdot (10 - 50) = -40\)</span></p></li>
+</ul>
+<p>Variance réduite : <span class="math notranslate nohighlight">\(\text{Var}(G - b) = \text{Var}([50, -40]) = 2025\)</span> → Variance toujours présente mais les valeurs sont plus “centrées”.</p>
+<p><strong>Pourquoi pas de biais ?</strong></p>
+<p>La baseline <span class="math notranslate nohighlight">\(b(s)\)</span> ne dépend pas de l’action <span class="math notranslate nohighlight">\(a\)</span>, donc :
+$<span class="math notranslate nohighlight">\(\mathbb{E}_{a \sim \pi}[\nabla \log \pi(a|s) \cdot b(s)] = b(s) \cdot \mathbb{E}_{a \sim \pi}[\nabla \log \pi(a|s)]\)</span>$</p>
+<p>Or <span class="math notranslate nohighlight">\(\mathbb{E}_{a \sim \pi}[\nabla \log \pi(a|s)] = \nabla \mathbb{E}_{a \sim \pi}[\pi(a|s)] = \nabla 1 = 0\)</span>.</p>
+<p>Donc soustraire <span class="math notranslate nohighlight">\(b(s)\)</span> ne change pas l’espérance du gradient !</p>
+<p><strong>Baseline optimale</strong> : Théoriquement, la baseline qui minimise la variance est <span class="math notranslate nohighlight">\(b(s) = V(s)\)</span>, car elle “centre” les returns autour de leur valeur attendue.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="exercice-3-implementation-de-reinforce">
+<h3>Exercice 3 : Implémentation de REINFORCE<a class="headerlink" href="#exercice-3-implementation-de-reinforce" title="Link to this heading">#</a></h3>
+<p><strong>Question</strong> : Vous implémentez REINFORCE sur CartPole. Après 100 épisodes, votre agent n’apprend pas (performance plateau). Listez 3 causes possibles et leurs solutions.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<p><strong>Causes possibles et solutions</strong> :</p>
+<p><strong>1. Learning Rate Inadéquat</strong></p>
+<ul class="simple">
+<li><p><strong>Symptôme</strong> : Pas d’amélioration ou instabilité</p></li>
+<li><p><strong>Cause</strong> : <span class="math notranslate nohighlight">\(\alpha\)</span> trop grand (instabilité) ou trop petit (apprentissage trop lent)</p></li>
+<li><p><strong>Solution</strong> :</p>
+<ul>
+<li><p>Essayer <span class="math notranslate nohighlight">\(\alpha \in \{10^{-4}, 3 \times 10^{-4}, 10^{-3}, 3 \times 10^{-3}\}\)</span></p></li>
+<li><p>Utiliser learning rate decay : <span class="math notranslate nohighlight">\(\alpha_t = \alpha_0 / (1 + t/1000)\)</span></p></li>
+<li><p>Monitorer la norme des gradients</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>2. Variance Trop Élevée</strong></p>
+<ul class="simple">
+<li><p><strong>Symptôme</strong> : Performance très erratique, oscillations importantes</p></li>
+<li><p><strong>Cause</strong> : REINFORCE vanilla sans baseline</p></li>
+<li><p><strong>Solution</strong> :</p>
+<ul>
+<li><p>Ajouter une baseline apprise : <span class="math notranslate nohighlight">\(V(s;w)\)</span></p></li>
+<li><p>Utiliser plusieurs épisodes avant la mise à jour (batch)</p></li>
+<li><p>Normaliser les returns : <span class="math notranslate nohighlight">\(G_t \leftarrow (G_t - \mu) / (\sigma + \epsilon)\)</span></p></li>
+</ul>
+</li>
+</ul>
+<p><strong>3. Exploration Insuffisante</strong></p>
+<ul class="simple">
+<li><p><strong>Symptôme</strong> : Agent bloqué dans comportement sous-optimal</p></li>
+<li><p><strong>Cause</strong> : Policy trop déterministe trop tôt</p></li>
+<li><p><strong>Solution</strong> :</p>
+<ul>
+<li><p>Ajouter un bonus d’entropie : <span class="math notranslate nohighlight">\(J(\theta) = \mathbb{E}[G] + \beta H(\pi)\)</span> où <span class="math notranslate nohighlight">\(H\)</span> est l’entropie</p></li>
+<li><p>Augmenter la température du softmax temporairement</p></li>
+<li><p>Initialiser les poids du réseau avec petites valeurs</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>4. Architecture Inadéquate (bonus)</strong></p>
+<ul class="simple">
+<li><p><strong>Cause</strong> : Réseau trop simple ou trop complexe</p></li>
+<li><p><strong>Solution</strong> :</p>
+<ul>
+<li><p>Pour CartPole : 2 hidden layers de 64 neurones suffisent</p></li>
+<li><p>Utiliser activation ReLU ou tanh</p></li>
+<li><p>Vérifier que le réseau peut représenter la policy désirée</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>5. Discount Factor Sous-Optimal (bonus)</strong></p>
+<ul class="simple">
+<li><p><strong>Cause</strong> : <span class="math notranslate nohighlight">\(\gamma\)</span> trop proche de 1 ou trop petit</p></li>
+<li><p><strong>Solution</strong> :</p>
+<ul>
+<li><p>Pour environnements courts (CartPole) : <span class="math notranslate nohighlight">\(\gamma \in [0.95, 0.99]\)</span></p></li>
+<li><p>Pour environnements longs : <span class="math notranslate nohighlight">\(\gamma &gt; 0.99\)</span></p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Debugging pratique</strong> :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Vérifier les gradients</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Grad norm: </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Monitorer les returns</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean return: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">returns</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Vérifier les log-probs</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Log prob range: [</span><span class="si">{</span><span class="n">log_probs</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">log_probs</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="exercice-4-actor-critic-vs-reinforce">
+<h3>Exercice 4 : Actor-Critic vs REINFORCE<a class="headerlink" href="#exercice-4-actor-critic-vs-reinforce" title="Link to this heading">#</a></h3>
+<p><strong>Question</strong> : Comparez Actor-Critic one-step avec REINFORCE sur les aspects suivants :
+(a) Biais et variance
+(b) Vitesse de convergence
+(c) Applicabilité aux environnements continus (non-épisodiques)</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<p><strong>(a) Biais et Variance</strong></p>
+<p><strong>REINFORCE</strong> :</p>
+<ul class="simple">
+<li><p><strong>Biais</strong> : Aucun (unbiased) car utilise le vrai return <span class="math notranslate nohighlight">\(G_t\)</span></p></li>
+<li><p><strong>Variance</strong> : Très élevée car <span class="math notranslate nohighlight">\(G_t\)</span> dépend de toute la trajectoire future</p></li>
+<li><p><span class="math notranslate nohighlight">\(G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \ldots\)</span> accumule du bruit</p></li>
+</ul>
+<p><strong>Actor-Critic</strong> :</p>
+<ul class="simple">
+<li><p><strong>Biais</strong> : Présent car utilise <span class="math notranslate nohighlight">\(\delta = R + \gamma V(S') - V(S)\)</span> qui dépend de l’approximation <span class="math notranslate nohighlight">\(V\)</span></p></li>
+<li><p><strong>Variance</strong> : Beaucoup plus faible car dépend seulement de <span class="math notranslate nohighlight">\(R\)</span> et <span class="math notranslate nohighlight">\(V(S')\)</span> (pas toute la trajectoire)</p></li>
+<li><p>Bootstrap sur <span class="math notranslate nohighlight">\(V(S')\)</span> au lieu d’attendre le return complet</p></li>
+</ul>
+<p><strong>Trade-off</strong> : Actor-Critic échange un peu de biais contre beaucoup moins de variance → convergence plus rapide en pratique.</p>
+<p><strong>(b) Vitesse de Convergence</strong></p>
+<p><strong>REINFORCE</strong> :</p>
+<ul class="simple">
+<li><p>Apprentissage lent dû à la haute variance</p></li>
+<li><p>Nécessite beaucoup d’épisodes pour moyenner le bruit</p></li>
+<li><p>Mises à jour en batch après épisode complet</p></li>
+<li><p>Sample inefficient</p></li>
+</ul>
+<p><strong>Actor-Critic</strong> :</p>
+<ul class="simple">
+<li><p>Apprentissage plus rapide grâce à faible variance</p></li>
+<li><p>Mises à jour online à chaque step</p></li>
+<li><p>Meilleure utilisation des échantillons</p></li>
+<li><p>Sample efficient</p></li>
+</ul>
+<p><strong>En pratique</strong> : Actor-Critic converge typiquement 5-10x plus vite que REINFORCE sur la plupart des tâches.</p>
+<p><strong>(c) Environnements Continus (non-épisodiques)</strong></p>
+<p><strong>REINFORCE</strong> :</p>
+<ul class="simple">
+<li><p><strong>Ne fonctionne pas</strong> sur environnements continus</p></li>
+<li><p>Nécessite absolument des épisodes complets pour calculer <span class="math notranslate nohighlight">\(G_t\)</span></p></li>
+<li><p>Limité aux tâches épisodiques</p></li>
+</ul>
+<p><strong>Actor-Critic</strong> :</p>
+<ul class="simple">
+<li><p><strong>Fonctionne parfaitement</strong> sur environnements continus</p></li>
+<li><p>Pas besoin d’attendre la fin d’un épisode</p></li>
+<li><p>Peut faire des mises à jour infiniment avec TD learning</p></li>
+<li><p>Applicable à tous types d’environnements</p></li>
+</ul>
+<p><strong>Exemple</strong> : Contrôle de température d’un bâtiment (pas de “fin” naturelle) → Actor-Critic only.</p>
+<p><strong>Tableau récapitulatif</strong> :</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>REINFORCE</p></th>
+<th class="head"><p>Actor-Critic</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Biais</p></td>
+<td><p>Aucun</p></td>
+<td><p>Oui</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variance</p></td>
+<td><p>Très élevée</p></td>
+<td><p>Faible</p></td>
+</tr>
+<tr class="row-even"><td><p>Convergence</p></td>
+<td><p>Lente</p></td>
+<td><p>Rapide</p></td>
+</tr>
+<tr class="row-odd"><td><p>Sample efficiency</p></td>
+<td><p>Faible</p></td>
+<td><p>Élevée</p></td>
+</tr>
+<tr class="row-even"><td><p>Environnements continus</p></td>
+<td><p>✗ Non</p></td>
+<td><p>✓ Oui</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mise à jour</p></td>
+<td><p>Après épisode</p></td>
+<td><p>Chaque step</p></td>
+</tr>
+<tr class="row-even"><td><p>Complexité implémentation</p></td>
+<td><p>Simple</p></td>
+<td><p>Moyenne</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="exercice-5-design-d-une-gaussian-policy">
+<h3>Exercice 5 : Design d’une Gaussian Policy<a class="headerlink" href="#exercice-5-design-d-une-gaussian-policy" title="Link to this heading">#</a></h3>
+<p><strong>Question</strong> : Pour un problème de contrôle continu (action <span class="math notranslate nohighlight">\(a \in \mathbb{R}\)</span>), vous utilisez une Gaussian policy :</p>
+<div class="math notranslate nohighlight">
+\[\pi(a|s;\theta) = \mathcal{N}(a | \mu_\theta(s), \sigma^2)\]</div>
+<p>où <span class="math notranslate nohighlight">\(\mu_\theta(s)\)</span> est produit par un réseau de neurones et <span class="math notranslate nohighlight">\(\sigma\)</span> est un hyperparamètre fixe.</p>
+<p>(a) Écrivez l’expression de <span class="math notranslate nohighlight">\(\nabla_\theta \log \pi(a|s;\theta)\)</span> pour cette policy.</p>
+<p>(b) Quel est l’effet de <span class="math notranslate nohighlight">\(\sigma\)</span> sur l’exploration ? Que se passe-t-il si <span class="math notranslate nohighlight">\(\sigma\)</span> est trop grand ou trop petit ?</p>
+<p>(c) Proposez une amélioration où <span class="math notranslate nohighlight">\(\sigma\)</span> est aussi appris.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<p><strong>(a)</strong> Expression de <span class="math notranslate nohighlight">\(\nabla_\theta \log \pi(a|s;\theta)\)</span> :</p>
+<p>Pour une Gaussian policy :
+$<span class="math notranslate nohighlight">\(\pi(a|s;\theta) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(a-\mu_\theta(s))^2}{2\sigma^2}\right)\)</span>$</p>
+<p>Le log-probabilité :
+$<span class="math notranslate nohighlight">\(\log \pi(a|s;\theta) = -\frac{1}{2}\log(2\pi\sigma^2) - \frac{(a-\mu_\theta(s))^2}{2\sigma^2}\)</span>$</p>
+<p>Comme <span class="math notranslate nohighlight">\(\sigma\)</span> est fixe, seul le terme avec <span class="math notranslate nohighlight">\(\mu_\theta(s)\)</span> dépend de <span class="math notranslate nohighlight">\(\theta\)</span> :
+$<span class="math notranslate nohighlight">\(\log \pi(a|s;\theta) = \text{constante} - \frac{(a-\mu_\theta(s))^2}{2\sigma^2}\)</span>$</p>
+<p>Gradient :
+$<span class="math notranslate nohighlight">\(\nabla_\theta \log \pi(a|s;\theta) = -\frac{1}{2\sigma^2} \cdot 2(a-\mu_\theta(s)) \cdot (-\nabla_\theta \mu_\theta(s))\)</span>$</p>
+<div class="math notranslate nohighlight">
+\[= \frac{a - \mu_\theta(s)}{\sigma^2} \nabla_\theta \mu_\theta(s)\]</div>
+<p><strong>Interprétation</strong> :</p>
+<ul class="simple">
+<li><p>Si <span class="math notranslate nohighlight">\(a &gt; \mu_\theta(s)\)</span> (action plus grande que la moyenne) : gradient pousse <span class="math notranslate nohighlight">\(\mu\)</span> vers le haut</p></li>
+<li><p>Si <span class="math notranslate nohighlight">\(a &lt; \mu_\theta(s)\)</span> (action plus petite) : gradient pousse <span class="math notranslate nohighlight">\(\mu\)</span> vers le bas</p></li>
+<li><p>L’ampleur dépend de l’écart <span class="math notranslate nohighlight">\((a - \mu)\)</span> et est inversement proportionnelle à <span class="math notranslate nohighlight">\(\sigma^2\)</span></p></li>
+</ul>
+<p><strong>(b)</strong> Effet de <span class="math notranslate nohighlight">\(\sigma\)</span> sur l’exploration :</p>
+<p><strong><span class="math notranslate nohighlight">\(\sigma\)</span> contrôle l’exploration</strong> :</p>
+<p><strong>Si <span class="math notranslate nohighlight">\(\sigma\)</span> trop grand</strong> :</p>
+<ul class="simple">
+<li><p>✗ Exploration excessive (actions très aléatoires)</p></li>
+<li><p>✗ Échantillonne souvent des actions sous-optimales</p></li>
+<li><p>✗ Apprentissage lent car signal bruité</p></li>
+<li><p>✗ Agent n’exploite jamais vraiment la policy apprise</p></li>
+<li><p>Exemple : <span class="math notranslate nohighlight">\(\sigma = 10\)</span> pour contrôle de pendule → actions complètement erratiques</p></li>
+</ul>
+<p><strong>Si <span class="math notranslate nohighlight">\(\sigma\)</span> trop petit</strong> :</p>
+<ul class="simple">
+<li><p>✗ Exploration insuffisante (policy quasi-déterministe)</p></li>
+<li><p>✗ Convergence prématurée vers minimum local</p></li>
+<li><p>✗ Ne découvre pas de bonnes stratégies alternatives</p></li>
+<li><p>✗ Gradients très faibles si action échantillonnée loin de <span class="math notranslate nohighlight">\(\mu\)</span></p></li>
+<li><p>Exemple : <span class="math notranslate nohighlight">\(\sigma = 0.01\)</span> → agent fait presque toujours la même action</p></li>
+</ul>
+<p><strong><span class="math notranslate nohighlight">\(\sigma\)</span> optimal</strong> :</p>
+<ul class="simple">
+<li><p>✓ Équilibre exploration-exploitation</p></li>
+<li><p>✓ Généralement décroître <span class="math notranslate nohighlight">\(\sigma\)</span> au cours de l’entraînement :</p>
+<ul>
+<li><p>Début : <span class="math notranslate nohighlight">\(\sigma\)</span> élevé pour explorer</p></li>
+<li><p>Fin : <span class="math notranslate nohighlight">\(\sigma\)</span> faible pour exploiter</p></li>
+</ul>
+</li>
+<li><p>Typique : <span class="math notranslate nohighlight">\(\sigma \in [0.1, 1.0]\)</span> selon l’échelle des actions</p></li>
+</ul>
+<p><strong>(c)</strong> Amélioration : Apprendre <span class="math notranslate nohighlight">\(\sigma\)</span> (ou <span class="math notranslate nohighlight">\(\log \sigma\)</span>) :</p>
+<p><strong>Approche 1 : Paramétrer <span class="math notranslate nohighlight">\(\sigma\)</span> directement</strong></p>
+<p>Le réseau produit à la fois <span class="math notranslate nohighlight">\(\mu_\theta(s)\)</span> et <span class="math notranslate nohighlight">\(\sigma_\theta(s)\)</span> :</p>
+<p>État s → Neural Network → [μ_θ(s), log σ_θ(s)]
+↓           ↓
+mean      exp(·) → σ_θ(s)</p>
+<p>On paramétrise <span class="math notranslate nohighlight">\(\log \sigma\)</span> plutôt que <span class="math notranslate nohighlight">\(\sigma\)</span> pour garantir <span class="math notranslate nohighlight">\(\sigma &gt; 0\)</span>.</p>
+<p><strong>Gradient complet</strong> :</p>
+<div class="math notranslate nohighlight">
+\[\log \pi(a|s;\theta) = -\log \sigma_\theta(s) - \frac{1}{2}\log(2\pi) - \frac{(a-\mu_\theta(s))^2}{2\sigma^2_\theta(s)}\]</div>
+<p>Gradient par rapport à <span class="math notranslate nohighlight">\(\mu\)</span> (comme avant) :
+$<span class="math notranslate nohighlight">\(\frac{\partial}{\partial \mu_\theta} \log \pi = \frac{a - \mu_\theta(s)}{\sigma^2_\theta(s)} \nabla_\theta \mu_\theta(s)\)</span>$</p>
+<p>Gradient par rapport à <span class="math notranslate nohighlight">\(\log \sigma\)</span> :
+$<span class="math notranslate nohighlight">\(\frac{\partial}{\partial \log \sigma_\theta} \log \pi = -1 + \frac{(a-\mu_\theta(s))^2}{\sigma^2_\theta(s)}\)</span>$</p>
+<p><strong>Interprétation</strong> :</p>
+<ul class="simple">
+<li><p>Si <span class="math notranslate nohighlight">\((a-\mu)^2 &gt; \sigma^2\)</span> : augmenter <span class="math notranslate nohighlight">\(\sigma\)</span> (action loin de la moyenne)</p></li>
+<li><p>Si <span class="math notranslate nohighlight">\((a-\mu)^2 &lt; \sigma^2\)</span> : diminuer <span class="math notranslate nohighlight">\(\sigma\)</span> (action proche de la moyenne)</p></li>
+<li><p>Le réseau apprend automatiquement quand explorer vs exploiter</p></li>
+</ul>
+<p><strong>Approche 2 : <span class="math notranslate nohighlight">\(\sigma\)</span> dépendant de l’état</strong></p>
+<p>Architecture :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">GaussianPolicy</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dim</span><span class="p">,</span> <span class="n">action_dim</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">state_dim</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">action_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_std</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">action_dim</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">log_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_std</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span>
+</pre></div>
+</div>
+</div>
+<p><strong>Avantages</strong> :</p>
+<ul class="simple">
+<li><p>✓ Exploration adaptative selon l’état</p></li>
+<li><p>✓ Plus d’exploration dans états incertains</p></li>
+<li><p>✓ Moins d’exploration dans états bien connus</p></li>
+<li><p>✓ Convergence potentiellement plus rapide</p></li>
+</ul>
+<p><strong>Approche 3 : <span class="math notranslate nohighlight">\(\sigma\)</span> global appris</strong></p>
+<p><span class="math notranslate nohighlight">\(\sigma\)</span> est un paramètre scalaire global appris (indépendant de <span class="math notranslate nohighlight">\(s\)</span>) :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">log_std</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">action_dim</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><strong>Avantages</strong> :</p>
+<ul class="simple">
+<li><p>✓ Plus simple (moins de paramètres)</p></li>
+<li><p>✓ Suffit souvent en pratique</p></li>
+<li><p>✓ Plus stable</p></li>
+</ul>
+<p><strong>Recommandation pratique</strong> :</p>
+<ul class="simple">
+<li><p>Commencer avec <span class="math notranslate nohighlight">\(\sigma\)</span> global appris</p></li>
+<li><p>Si besoin de plus d’expressivité → <span class="math notranslate nohighlight">\(\sigma\)</span> dépendant de l’état</p></li>
+<li><p>Toujours paramétrer <span class="math notranslate nohighlight">\(\log \sigma\)</span> plutôt que <span class="math notranslate nohighlight">\(\sigma\)</span> directement</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="points-cles-a-retenir">
+<h2>Points Clés à Retenir<a class="headerlink" href="#points-cles-a-retenir" title="Link to this heading">#</a></h2>
+<div class="important admonition">
+<p class="admonition-title">Concepts Fondamentaux</p>
+<p><strong>1. Philosophie des Policy Gradients</strong></p>
+<ul class="simple">
+<li><p>Apprendre <strong>directement</strong> la policy <span class="math notranslate nohighlight">\(\pi(a|s;\theta)\)</span> (pas indirectement via value function)</p></li>
+<li><p>Optimiser l’espérance du return : <span class="math notranslate nohighlight">\(J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}[G_0]\)</span></p></li>
+<li><p>Utiliser gradient ascent pour améliorer <span class="math notranslate nohighlight">\(\theta\)</span></p></li>
+</ul>
+<p><strong>2. Policy Gradient Theorem</strong></p>
+<ul class="simple">
+<li><p>Formule clé : <span class="math notranslate nohighlight">\(\nabla_\theta J(\theta) = \mathbb{E}\left[\sum_t \nabla_\theta \log \pi_\theta(A_t|S_t) \, G_t\right]\)</span></p></li>
+<li><p>Intuition : Augmenter probabilité des actions qui mènent à haut return</p></li>
+<li><p>Estimable par Monte Carlo (échantillonnage)</p></li>
+</ul>
+<p><strong>3. Trade-off Biais-Variance</strong></p>
+<ul class="simple">
+<li><p><strong>REINFORCE</strong> : Unbiased mais haute variance (Monte Carlo)</p></li>
+<li><p><strong>Actor-Critic</strong> : Biaisé mais faible variance (Bootstrapping)</p></li>
+<li><p>En pratique : Actor-Critic converge plus vite</p></li>
+</ul>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">Techniques Essentielles</p>
+<p><strong>Réduction de Variance</strong> :</p>
+<ul class="simple">
+<li><p><strong>Baseline</strong> <span class="math notranslate nohighlight">\(b(s)\)</span> : Réduit variance sans biais</p></li>
+<li><p>Baseline optimale : <span class="math notranslate nohighlight">\(b(s) = V(s)\)</span></p></li>
+<li><p>Conduit à l’<strong>advantage</strong> : <span class="math notranslate nohighlight">\(A(s,a) = Q(s,a) - V(s)\)</span> ou <span class="math notranslate nohighlight">\(A \approx G_t - V(s)\)</span></p></li>
+</ul>
+<p><strong>Actor-Critic Architecture</strong> :</p>
+<ul class="simple">
+<li><p><strong>Actor</strong> : Policy <span class="math notranslate nohighlight">\(\pi(a|s;\theta)\)</span> mise à jour par policy gradient</p></li>
+<li><p><strong>Critic</strong> : Value function <span class="math notranslate nohighlight">\(V(s;w)\)</span> mise à jour par TD learning</p></li>
+<li><p>Synergie : Critic fournit baseline pour réduire variance de l’Actor</p></li>
+</ul>
+<p><strong>Mises à Jour</strong> :</p>
+<ul class="simple">
+<li><p>REINFORCE : Après épisode complet (batch)</p></li>
+<li><p>Actor-Critic : À chaque step (online)</p></li>
+<li><p>Actor-Critic plus sample efficient</p></li>
+</ul>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Avantages et Limitations</p>
+<p><strong>Quand Utiliser Policy Gradients</strong> :</p>
+<ul class="simple">
+<li><p>✓ <strong>Actions continues</strong> : Robotique, contrôle de moteurs, véhicules autonomes</p></li>
+<li><p>✓ <strong>Policies stochastiques</strong> : Jeux avec stratégies mixtes</p></li>
+<li><p>✓ <strong>Changements graduels</strong> : Quand stabilité importante</p></li>
+<li><p>✓ <strong>Environnements continus</strong> : Actor-Critic fonctionne sans épisodes</p></li>
+</ul>
+<p><strong>Limitations</strong> :</p>
+<ul class="simple">
+<li><p>✗ Convergence locale seulement (pas global optimum)</p></li>
+<li><p>✗ Sample inefficiency (surtout REINFORCE)</p></li>
+<li><p>✗ Sensibilité aux hyperparamètres (learning rates)</p></li>
+<li><p>✗ Peut nécessiter beaucoup de tuning</p></li>
+</ul>
+<p><strong>vs Value-Based Methods</strong> :</p>
+<ul class="simple">
+<li><p>Policy Gradients : Mieux pour actions continues, policies stochastiques</p></li>
+<li><p>Value-Based (DQN) : Mieux pour actions discrètes, sample efficiency</p></li>
+</ul>
+</div>
+<div class="seealso admonition">
+<p class="admonition-title">Formules Clés</p>
+<p><strong>REINFORCE</strong> :
+$<span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha \nabla_\theta \log \pi_\theta(A_t|S_t) \cdot G_t\)</span>$</p>
+<p><strong>REINFORCE avec Baseline</strong> :
+$<span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha \nabla_\theta \log \pi_\theta(A_t|S_t) \cdot (G_t - V(S_t))\)</span>$</p>
+<p><strong>Actor-Critic (TD error)</strong> :
+$<span class="math notranslate nohighlight">\(\delta_t = R_{t+1} + \gamma V(S_{t+1};w) - V(S_t;w)\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha_\theta \nabla_\theta \log \pi_\theta(A_t|S_t) \cdot \delta_t\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(w \leftarrow w + \alpha_w \delta_t \nabla_w V(S_t;w)\)</span>$</p>
+<p><strong>Gaussian Policy (actions continues)</strong> :
+$<span class="math notranslate nohighlight">\(\pi(a|s;\theta) = \mathcal{N}(a|\mu_\theta(s), \sigma^2)\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(\nabla_\theta \log \pi(a|s;\theta) = \frac{a - \mu_\theta(s)}{\sigma^2} \nabla_\theta \mu_\theta(s)\)</span>$</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Tableau Récapitulatif</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Méthode</p></th>
+<th class="head"><p>Update</p></th>
+<th class="head"><p>Biais</p></th>
+<th class="head"><p>Variance</p></th>
+<th class="head"><p>Online</p></th>
+<th class="head"><p>Continu</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>REINFORCE</strong></p></td>
+<td><p>Après épisode</p></td>
+<td><p>Non</p></td>
+<td><p>Très haute</p></td>
+<td><p>Non</p></td>
+<td><p>Non</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>REINFORCE + Baseline</strong></p></td>
+<td><p>Après épisode</p></td>
+<td><p>Non</p></td>
+<td><p>Haute</p></td>
+<td><p>Non</p></td>
+<td><p>Non</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Actor-Critic</strong></p></td>
+<td><p>Chaque step</p></td>
+<td><p>Oui</p></td>
+<td><p>Faible</p></td>
+<td><p>Oui</p></td>
+<td><p>Oui</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Règle générale</strong> : Actor-Critic préféré dans la plupart des cas modernes.</p>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./theorie"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="05_function_approximation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">06 — Approximation de Fonctions &amp; Généralisation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="07_deep_rl.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">08 — Deep Reinforcement Learning (DQN, PPO, autres)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoreme-du-policy-gradient">1. Théorème du Policy Gradient</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#objectif-d-optimisation">Objectif d’Optimisation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#le-theoreme">Le Théorème</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivation-intuitive">Dérivation Intuitive</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reinforce-algorithm">2. REINFORCE Algorithm</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithme-de-base">Algorithme de Base</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parametrisations-courantes">Paramétrisations Courantes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#baseline-et-reduction-de-variance">3. Baseline et Réduction de Variance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#le-probleme-de-variance">Le Problème de Variance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction-d-une-baseline">Introduction d’une Baseline</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#choix-de-baseline-optimal">Choix de Baseline Optimal</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reinforce-avec-baseline">REINFORCE avec Baseline</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actor-critic-methods">4. Actor-Critic Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-step-actor-critic">One-Step Actor-Critic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#avantage-de-td-sur-monte-carlo">Avantage de TD sur Monte Carlo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#avantages-et-applications">5. Avantages et Applications</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercices">Exercices</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-1-calcul-du-policy-gradient">Exercice 1 : Calcul du Policy Gradient</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-2-variance-de-reinforce">Exercice 2 : Variance de REINFORCE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-3-implementation-de-reinforce">Exercice 3 : Implémentation de REINFORCE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-4-actor-critic-vs-reinforce">Exercice 4 : Actor-Critic vs REINFORCE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-5-design-d-une-gaussian-policy">Exercice 5 : Design d’une Gaussian Policy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#points-cles-a-retenir">Points Clés à Retenir</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Béria C. Kalpélbé
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1173 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>06 — Approximation de Fonctions &amp; Généralisation &#8212; Atelier : Apprentissage par Renforcement (RL)</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theorie/05_function_approximation';</script>
+    <link rel="canonical" href="/RL-workshop/theorie/05_function_approximation.html" />
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="07 — Policy Gradient Methods (REINFORCE, Actor-Critic)" href="06_policy_gradients.html" />
+    <link rel="prev" title="Temporal-Difference (TD) Learning" href="04_td_learning.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Atelier : Apprentissage par Renforcement (RL) - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Introduction à l’Apprentissage par Renforcement
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_concepts_de_base.html">1. Concepts fondamentaux du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_dynamic_programming.html">2. Dynamic Programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_monte_carlo.html">3. Monte Carlo methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_td_learning.html">4. TD, SARSA, Q-Learning</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">5. Approximation &amp; généralisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_policy_gradients.html">6. Policy Gradient methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_deep_rl.html">7. Deep Reinforcement Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pratiques/coding_session.html">8. Etude de cas: CartPole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../applications.html">9. Applications avancées du RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ressources.html">Références et ressources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/theorie/05_function_approximation.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>06 — Approximation de Fonctions & Généralisation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximation-lineaire-linear-function-approximation">1. Approximation Linéaire (Linear Function Approximation)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#concept">Concept</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mise-a-jour-basee-sur-le-gradient-semi-gradient-td">Mise à Jour Basée sur le Gradient (Semi-Gradient TD)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithme-semi-gradient-td-0-avec-approximation-lineaire">Algorithme : Semi-Gradient TD(0) avec Approximation Linéaire</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#avantages-et-limitations">Avantages et Limitations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximation-non-lineaire-deep-reinforcement-learning">2. Approximation Non-Linéaire : Deep Reinforcement Learning</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#approximateurs-par-reseaux-de-neurones-neural-network-approximators">Approximateurs par Réseaux de Neurones (Neural Network Approximators)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#objectif-d-entrainement-training-objective">Objectif d’Entraînement (Training Objective)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mise-a-jour-du-gradient">Mise à Jour du Gradient</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#techniques-de-stabilisation">3. Techniques de Stabilisation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#methodes-cles-de-stabilisation">Méthodes Clés de Stabilisation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#experience-replay-buffer-lin-1992-mnih-et-al-2015">Experience Replay Buffer (Lin, 1992; Mnih et al., 2015)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#target-network-mnih-et-al-2015">Target Network (Mnih et al., 2015)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#techniques-additionnelles">Techniques Additionnelles</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithme-dqn-deep-q-network">4. Algorithme DQN (Deep Q-Network)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#considerations-theoriques-bonnes-pratiques">5. Considérations Théoriques &amp; Bonnes Pratiques</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-deadly-triad-triade-mortelle">The Deadly Triad (Triade Mortelle)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trade-off-biais-variance">Trade-off Biais-Variance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercices">Exercices</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-1-approximation-lineaire">Exercice 1 : Approximation Linéaire</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-2-semi-gradient-vs-vrai-gradient">Exercice 2 : Semi-Gradient vs Vrai Gradient</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-3-analyse-de-l-experience-replay">Exercice 3 : Analyse de l’Experience Replay</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-4-impact-du-target-network">Exercice 4 : Impact du Target Network</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-5-concevoir-des-features-pour-l-approximation-lineaire">Exercice 5 : Concevoir des Features pour l’Approximation Linéaire</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#points-cles-a-retenir">Points Clés à Retenir</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="approximation-de-fonctions-generalisation">
+<h1>06 — Approximation de Fonctions &amp; Généralisation<a class="headerlink" href="#approximation-de-fonctions-generalisation" title="Link to this heading">#</a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>Lorsqu’on traite des espaces d’états continus ou très grands, maintenir des représentations tabulaires explicites des fonctions de valeur (tables V, tables Q) devient computationnellement irréalisable ou impossible. L’<strong>approximation de fonctions</strong> (function approximation) répond à ce défi en représentant les fonctions de valeur par des fonctions paramétrées <span class="math notranslate nohighlight">\(\hat{V}(s;\theta)\)</span> ou <span class="math notranslate nohighlight">\(\hat{Q}(s,a;\theta)\)</span>, où <span class="math notranslate nohighlight">\(\theta\)</span> représente les paramètres apprenables.</p>
+<div class="tip admonition">
+<p class="admonition-title">Pourquoi l’Approximation de Fonctions ?</p>
+<p>Cette approche permet :</p>
+<ul class="simple">
+<li><p><strong>Généralisation</strong> : L’apprentissage sur des états visités se transfère aux états non-visités</p></li>
+<li><p><strong>Scalabilité</strong> : Gestion d’espaces d’états de haute dimension ou continus</p></li>
+<li><p><strong>Efficacité</strong> : Représentation compacte au lieu d’une énumération exhaustive</p></li>
+</ul>
+</div>
+</section>
+<hr class="docutils" />
+<section id="approximation-lineaire-linear-function-approximation">
+<h2>1. Approximation Linéaire (Linear Function Approximation)<a class="headerlink" href="#approximation-lineaire-linear-function-approximation" title="Link to this heading">#</a></h2>
+<section id="concept">
+<h3>Concept<a class="headerlink" href="#concept" title="Link to this heading">#</a></h3>
+<p>On construit une représentation de features <span class="math notranslate nohighlight">\(\phi(s) \in \mathbb{R}^d\)</span> qui transforme les états en vecteurs de features de dimension fixe, puis on approxime la fonction de valeur comme une combinaison linéaire :</p>
+<div class="math notranslate nohighlight">
+\[\hat{V}(s;\theta) = \theta^T \phi(s) = \sum_{i=1}^{d} \theta_i \phi_i(s)\]</div>
+<div class="note admonition">
+<p class="admonition-title">Représentations de Features Courantes</p>
+<p>Le <strong>feature engineering</strong> est crucial pour l’approximation linéaire. Choix courants :</p>
+<ul class="simple">
+<li><p><strong>Fonctions polynomiales</strong> (polynomial basis) : <span class="math notranslate nohighlight">\(\phi(s) = [1, s, s^2, s^3, ...]\)</span></p></li>
+<li><p><strong>Fonctions à base radiale</strong> (radial basis functions - RBFs) : <span class="math notranslate nohighlight">\(\phi_i(s) = \exp(-\|s - c_i\|^2 / 2\sigma^2)\)</span></p></li>
+<li><p><strong>Tile coding</strong> : Discrétisation avec recouvrement pour espaces continus</p></li>
+<li><p><strong>Base de Fourier</strong> (Fourier basis) : <span class="math notranslate nohighlight">\(\phi_i(s) = \cos(\pi i^T s)\)</span></p></li>
+</ul>
+</div>
+</section>
+<section id="mise-a-jour-basee-sur-le-gradient-semi-gradient-td">
+<h3>Mise à Jour Basée sur le Gradient (Semi-Gradient TD)<a class="headerlink" href="#mise-a-jour-basee-sur-le-gradient-semi-gradient-td" title="Link to this heading">#</a></h3>
+<p>Pour TD(0), on minimise l’erreur de différence temporelle (temporal difference error) en utilisant la descente de gradient stochastique :</p>
+<div class="math notranslate nohighlight">
+\[\theta \leftarrow \theta + \alpha \delta_t \nabla_{\theta} \hat{V}(S_t;\theta)\]</div>
+<p>où l’erreur TD (TD error) est :</p>
+<div class="math notranslate nohighlight">
+\[\delta_t = R_{t+1} + \gamma \hat{V}(S_{t+1};\theta) - \hat{V}(S_t;\theta)\]</div>
+<p>Pour l’approximation linéaire, <span class="math notranslate nohighlight">\(\nabla_{\theta} \hat{V}(S_t;\theta) = \phi(S_t)\)</span>, ce qui donne :</p>
+<div class="math notranslate nohighlight">
+\[\theta \leftarrow \theta + \alpha \delta_t \phi(S_t)\]</div>
+<div class="warning admonition">
+<p class="admonition-title">Méthodes Semi-Gradient</p>
+<p>On appelle cela une méthode “semi-gradient” car on traite <span class="math notranslate nohighlight">\(\hat{V}(S_{t+1};\theta)\)</span> dans la cible TD comme une constante (on ne dérive pas par rapport à elle). Cela brise le vrai gradient mais fonctionne souvent bien en pratique et est computationnellement plus simple.</p>
+</div>
+</section>
+<section id="algorithme-semi-gradient-td-0-avec-approximation-lineaire">
+<h3>Algorithme : Semi-Gradient TD(0) avec Approximation Linéaire<a class="headerlink" href="#algorithme-semi-gradient-td-0-avec-approximation-lineaire" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : Semi-Gradient TD(0) (Linear Function Approximation)
+─────────────────────────────────────────────────────────────────
+Entrée : learning rate α, discount γ, features φ(s)
+Sortie : θ tel que V̂(s;θ) ≈ V^π(s)
+
+// Initialisation
+θ ← 0  (ou petit aléatoire)
+
+// Apprentissage
+répéter pour chaque épisode :
+    Initialiser S
+    
+    répéter pour chaque step :
+        Exécuter action selon π, observer R, S&#39;
+        
+        // Calculer erreur TD
+        δ ← R + γ·V̂(S&#39;;θ) - V̂(S;θ)
+        
+        // Mise à jour semi-gradient
+        θ ← θ + α·δ·φ(S)
+        
+        S ← S&#39;
+        
+    jusqu&#39;à S terminal
+    
+jusqu&#39;à convergence
+
+retourner θ
+</pre></div>
+</div>
+</section>
+<section id="avantages-et-limitations">
+<h3>Avantages et Limitations<a class="headerlink" href="#avantages-et-limitations" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>✓ Avantages</p></th>
+<th class="head"><p>✗ Limitations</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Garanties de convergence sous certaines conditions</p></td>
+<td><p>Expressivité limitée pour les patterns complexes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Simple et interprétable</p></td>
+<td><p>Nécessite un design manuel des features</p></td>
+</tr>
+<tr class="row-even"><td><p>Calcul rapide</p></td>
+<td><p>Ne peut pas capturer des relations non-linéaires arbitraires</p></td>
+</tr>
+<tr class="row-odd"><td><p>Théorie bien comprise</p></td>
+<td><p>Performance dépend fortement de la qualité des features</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="approximation-non-lineaire-deep-reinforcement-learning">
+<h2>2. Approximation Non-Linéaire : Deep Reinforcement Learning<a class="headerlink" href="#approximation-non-lineaire-deep-reinforcement-learning" title="Link to this heading">#</a></h2>
+<section id="approximateurs-par-reseaux-de-neurones-neural-network-approximators">
+<h3>Approximateurs par Réseaux de Neurones (Neural Network Approximators)<a class="headerlink" href="#approximateurs-par-reseaux-de-neurones-neural-network-approximators" title="Link to this heading">#</a></h3>
+<p>Les réseaux de neurones profonds fournissent une représentation de features flexible et apprenable. Pour les fonctions de valeur action-état (action-value functions) :</p>
+<div class="math notranslate nohighlight">
+\[\hat{Q}(s,a;\theta)\]</div>
+<p>où <span class="math notranslate nohighlight">\(\theta\)</span> représente maintenant tous les poids et biais du réseau (potentiellement des millions de paramètres).</p>
+</section>
+<section id="objectif-d-entrainement-training-objective">
+<h3>Objectif d’Entraînement (Training Objective)<a class="headerlink" href="#objectif-d-entrainement-training-objective" title="Link to this heading">#</a></h3>
+<p>On utilise la descente de gradient stochastique sur l’erreur quadratique de Bellman (mean squared Bellman error) :</p>
+<div class="math notranslate nohighlight">
+\[L(\theta) = \mathbb{E}_{(s,a,r,s')\sim \mathcal{D}}\left[ \left(y - Q(s,a;\theta)\right)^2 \right]\]</div>
+<div class="note admonition">
+<p class="admonition-title">Variantes de Calcul de Cible (Target Computation)</p>
+<p>La cible <span class="math notranslate nohighlight">\(y\)</span> dépend de l’algorithme :</p>
+<ul class="simple">
+<li><p><strong>DQN</strong> : <span class="math notranslate nohighlight">\(y = r + \gamma \max_{a'} Q(s',a';\theta^-)\)</span> (utilise le target network)</p></li>
+<li><p><strong>Double DQN</strong> : <span class="math notranslate nohighlight">\(y = r + \gamma Q(s', \arg\max_{a'} Q(s',a';\theta); \theta^-)\)</span> (réduit la surestimation)</p></li>
+<li><p><strong>Sarsa</strong> : <span class="math notranslate nohighlight">\(y = r + \gamma Q(s',a';\theta)\)</span> (on-policy, utilise l’action suivante réelle)</p></li>
+</ul>
+</div>
+</section>
+<section id="mise-a-jour-du-gradient">
+<h3>Mise à Jour du Gradient<a class="headerlink" href="#mise-a-jour-du-gradient" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[\theta \leftarrow \theta - \alpha \nabla_\theta L(\theta) = \theta + \alpha (y - Q(s,a;\theta)) \nabla_\theta Q(s,a;\theta)\]</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="techniques-de-stabilisation">
+<h2>3. Techniques de Stabilisation<a class="headerlink" href="#techniques-de-stabilisation" title="Link to this heading">#</a></h2>
+<div class="danger admonition">
+<p class="admonition-title">Sources d’Instabilité en Deep RL</p>
+<ul class="simple">
+<li><p><strong>Cibles mouvantes</strong> (moving targets) : La cible TD dépend de <span class="math notranslate nohighlight">\(\theta\)</span>, qui change constamment</p></li>
+<li><p><strong>Échantillons corrélés</strong> (correlated samples) : Les expériences séquentielles sont fortement corrélées</p></li>
+<li><p><strong>Divergence de l’approximation</strong> : Aucune garantie de convergence pour les approximateurs non-linéaires</p></li>
+</ul>
+</div>
+<section id="methodes-cles-de-stabilisation">
+<h3>Méthodes Clés de Stabilisation<a class="headerlink" href="#methodes-cles-de-stabilisation" title="Link to this heading">#</a></h3>
+<section id="experience-replay-buffer-lin-1992-mnih-et-al-2015">
+<h4>Experience Replay Buffer (Lin, 1992; Mnih et al., 2015)<a class="headerlink" href="#experience-replay-buffer-lin-1992-mnih-et-al-2015" title="Link to this heading">#</a></h4>
+<p>Stocker les transitions <span class="math notranslate nohighlight">\((s,a,r,s',\text{done})\)</span> dans un buffer <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> et échantillonner des mini-batches aléatoires pour l’entraînement.</p>
+<div class="tip admonition">
+<p class="admonition-title">Bénéfices de l’Experience Replay</p>
+<ul class="simple">
+<li><p><strong>Brise la corrélation temporelle</strong> : L’échantillonnage aléatoire décorrèle les données séquentielles</p></li>
+<li><p><strong>Efficacité des données</strong> (data efficiency) : Chaque expérience peut être utilisée plusieurs fois</p></li>
+<li><p><strong>Stabilise l’apprentissage</strong> : Lisse les changements dans la distribution des données</p></li>
+</ul>
+</div>
+</section>
+<section id="target-network-mnih-et-al-2015">
+<h4>Target Network (Mnih et al., 2015)<a class="headerlink" href="#target-network-mnih-et-al-2015" title="Link to this heading">#</a></h4>
+<p>Maintenir un réseau séparé <span class="math notranslate nohighlight">\(\theta^-\)</span> pour calculer les cibles, mis à jour périodiquement :</p>
+<ul class="simple">
+<li><p><strong>Hard update</strong> : <span class="math notranslate nohighlight">\(\theta^- \leftarrow \theta\)</span> tous les <span class="math notranslate nohighlight">\(C\)</span> pas</p></li>
+<li><p><strong>Soft update</strong> : <span class="math notranslate nohighlight">\(\theta^- \leftarrow \tau\theta + (1-\tau)\theta^-\)</span> avec <span class="math notranslate nohighlight">\(\tau \ll 1\)</span></p></li>
+</ul>
+</section>
+<section id="techniques-additionnelles">
+<h4>Techniques Additionnelles<a class="headerlink" href="#techniques-additionnelles" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Technique</p></th>
+<th class="head"><p>Objectif</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Gradient clipping</p></td>
+<td><p>Limiter la norme du gradient pour éviter l’explosion des gradients</p></td>
+</tr>
+<tr class="row-odd"><td><p>Input normalization</p></td>
+<td><p>Standardiser les observations d’état pour un entraînement stable</p></td>
+</tr>
+<tr class="row-even"><td><p>Reward scaling/clipping</p></td>
+<td><p>Borner les magnitudes des récompenses à une plage raisonnable</p></td>
+</tr>
+<tr class="row-odd"><td><p>Huber loss</p></td>
+<td><p>Plus robuste aux outliers que le MSE</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="algorithme-dqn-deep-q-network">
+<h2>4. Algorithme DQN (Deep Q-Network)<a class="headerlink" href="#algorithme-dqn-deep-q-network" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithme : DQN (Deep Q-Network)
+──────────────────────────────────────────────────────────
+Entrée : learning rate α, discount γ, exploration ε
+        batch size B, buffer capacity N, update frequency C
+Sortie : Q-network θ, policy π
+
+// Initialisation
+Initialiser replay buffer D avec capacité N (vide)
+Initialiser Q-network avec poids aléatoires θ
+Initialiser target network θ⁻ ← θ
+step_count ← 0
+
+// Apprentissage
+répéter pour chaque épisode :
+    Initialiser S
+    
+    répéter pour chaque step de l&#39;épisode :
+        
+        // Sélection d&#39;action (ε-greedy)
+        avec probabilité ε :
+            A ← action aléatoire
+        sinon :
+            A ← argmax_a&#39; Q(S, a&#39;; θ)
+        
+        // Interaction avec environnement
+        Exécuter A, observer R, S&#39;, done
+        
+        // Stocker transition
+        Stocker (S, A, R, S&#39;, done) dans D
+        
+        // Apprentissage (si assez de données)
+        si |D| ≥ B alors :
+            
+            // Échantillonner mini-batch
+            Échantillonner {(sⱼ, aⱼ, rⱼ, s&#39;ⱼ, doneⱼ)} depuis D (taille B)
+            
+            // Calculer cibles
+            pour chaque j dans batch faire :
+                si doneⱼ alors :
+                    yⱼ ← rⱼ
+                sinon :
+                    yⱼ ← rⱼ + γ·max_a&#39; Q(s&#39;ⱼ, a&#39;; θ⁻)
+                fin si
+            fin pour
+            
+            // Mise à jour par gradient descent
+            L(θ) ← (1/B)·Σⱼ (yⱼ - Q(sⱼ, aⱼ; θ))²
+            θ ← θ - α·∇_θ L(θ)
+        
+        fin si
+        
+        // Mise à jour target network
+        step_count ← step_count + 1
+        si step_count mod C = 0 alors :
+            θ⁻ ← θ
+        fin si
+        
+        // Transition
+        S ← S&#39;
+        
+        // Décroissance exploration (optionnel)
+        ε ← max(ε_min, ε·decay_rate)
+        
+    jusqu&#39;à done = vrai
+    
+jusqu&#39;à convergence ou nombre max d&#39;épisodes
+
+// Extraire policy
+π(s) ← argmax_a Q(s, a; θ)
+
+retourner θ, π
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="considerations-theoriques-bonnes-pratiques">
+<h2>5. Considérations Théoriques &amp; Bonnes Pratiques<a class="headerlink" href="#considerations-theoriques-bonnes-pratiques" title="Link to this heading">#</a></h2>
+<section id="the-deadly-triad-triade-mortelle">
+<h3>The Deadly Triad (Triade Mortelle)<a class="headerlink" href="#the-deadly-triad-triade-mortelle" title="Link to this heading">#</a></h3>
+<div class="danger admonition">
+<p class="admonition-title">Deadly Triad (Sutton &amp; Barto)</p>
+<p>La combinaison de ces trois éléments peut causer instabilité ou divergence :</p>
+<ol class="arabic simple">
+<li><p><strong>Function approximation</strong> (surtout non-linéaire)</p></li>
+<li><p><strong>Bootstrapping</strong> (utiliser des valeurs estimées comme cibles, ex. apprentissage TD)</p></li>
+<li><p><strong>Off-policy learning</strong> (apprendre d’une politique différente de celle évaluée)</p></li>
+</ol>
+<p>Quand les trois sont présents, la convergence n’est pas garantie !</p>
+</div>
+</section>
+<section id="trade-off-biais-variance">
+<h3>Trade-off Biais-Variance<a class="headerlink" href="#trade-off-biais-variance" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 33.3%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Problème</p></th>
+<th class="head"><p>Cause</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Underfitting (biais élevé)</p></td>
+<td><p>Approximateur trop simple</p></td>
+<td><p>Augmenter capacité, meilleures features</p></td>
+</tr>
+<tr class="row-odd"><td><p>Overfitting (variance élevée)</p></td>
+<td><p>Mémorise sans généraliser</p></td>
+<td><p>Régularisation, données plus diverses</p></td>
+</tr>
+<tr class="row-even"><td><p>Instabilité</p></td>
+<td><p>Les trois de la deadly triad</p></td>
+<td><p>Utiliser techniques de stabilisation</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="exercices">
+<h2>Exercices<a class="headerlink" href="#exercices" title="Link to this heading">#</a></h2>
+<section id="exercice-1-approximation-lineaire">
+<h3>Exercice 1 : Approximation Linéaire<a class="headerlink" href="#exercice-1-approximation-lineaire" title="Link to this heading">#</a></h3>
+<p><strong>Question</strong> : Considérez un espace d’états 1D simple où <span class="math notranslate nohighlight">\(s \in [0, 1]\)</span>. Vous utilisez des features polynomiales : <span class="math notranslate nohighlight">\(\phi(s) = [1, s, s^2]^T\)</span> et paramètres <span class="math notranslate nohighlight">\(\theta = [2, -3, 1]^T\)</span>.</p>
+<p>(a) Quelle est la valeur de <span class="math notranslate nohighlight">\(\hat{V}(s=0.5; \theta)\)</span> ?</p>
+<p>(b) Si vous observez une transition <span class="math notranslate nohighlight">\((s=0.5, r=1.5, s'=0.6)\)</span> avec <span class="math notranslate nohighlight">\(\gamma=0.9\)</span> et learning rate <span class="math notranslate nohighlight">\(\alpha=0.1\)</span>, calculez le nouveau <span class="math notranslate nohighlight">\(\theta\)</span> après une mise à jour TD(0).</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<p><strong>(a)</strong> Calcul de <span class="math notranslate nohighlight">\(\hat{V}(0.5; \theta)\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[\hat{V}(0.5; \theta) = \theta^T \phi(0.5) = [2, -3, 1]^T \cdot [1, 0.5, 0.25]^T\]</div>
+<div class="math notranslate nohighlight">
+\[= 2(1) + (-3)(0.5) + 1(0.25) = 2 - 1.5 + 0.25 = 0.75\]</div>
+<p><strong>(b)</strong> Mise à jour TD(0) :</p>
+<p>D’abord, calculer <span class="math notranslate nohighlight">\(\hat{V}(0.6; \theta)\)</span> :
+$<span class="math notranslate nohighlight">\(\phi(0.6) = [1, 0.6, 0.36]^T\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(\hat{V}(0.6; \theta) = 2(1) + (-3)(0.6) + 1(0.36) = 2 - 1.8 + 0.36 = 0.56\)</span>$</p>
+<p>Erreur TD :
+$<span class="math notranslate nohighlight">\(\delta = r + \gamma \hat{V}(s'; \theta) - \hat{V}(s; \theta)\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(\delta = 1.5 + 0.9(0.56) - 0.75 = 1.5 + 0.504 - 0.75 = 1.254\)</span>$</p>
+<p>Mise à jour :
+$<span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha \delta \phi(s)\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(\theta \leftarrow [2, -3, 1]^T + 0.1(1.254)[1, 0.5, 0.25]^T\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(\theta \leftarrow [2, -3, 1]^T + [0.1254, 0.0627, 0.03135]^T\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(\theta \leftarrow [2.1254, -2.9373, 1.03135]^T\)</span>$</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="exercice-2-semi-gradient-vs-vrai-gradient">
+<h3>Exercice 2 : Semi-Gradient vs Vrai Gradient<a class="headerlink" href="#exercice-2-semi-gradient-vs-vrai-gradient" title="Link to this heading">#</a></h3>
+<p><strong>Question</strong> : Expliquez pourquoi la mise à jour TD(0) pour l’approximation de fonctions est appelée “semi-gradient” plutôt que vraie descente de gradient. Qu’est-ce qui serait différent si on utilisait le vrai gradient de l’erreur TD quadratique ?</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<p>La mise à jour TD(0) est appelée “semi-gradient” car elle ne prend le gradient que par rapport à l’estimation de valeur courante <span class="math notranslate nohighlight">\(\hat{V}(S_t;\theta)\)</span>, tout en traitant la valeur de l’état suivant <span class="math notranslate nohighlight">\(\hat{V}(S_{t+1};\theta)\)</span> comme une constante.</p>
+<p><strong>Semi-gradient TD(0) :</strong>
+$<span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha [R_{t+1} + \gamma \hat{V}(S_{t+1};\theta) - \hat{V}(S_t;\theta)] \nabla_\theta \hat{V}(S_t;\theta)\)</span>$</p>
+<p>Le <strong>vrai gradient</strong> dériverait l’erreur quadratique entière :
+$<span class="math notranslate nohighlight">\(L(\theta) = \frac{1}{2}[R_{t+1} + \gamma \hat{V}(S_{t+1};\theta) - \hat{V}(S_t;\theta)]^2\)</span>$</p>
+<p>Le vrai gradient serait :
+$<span class="math notranslate nohighlight">\(\nabla_\theta L(\theta) = [R_{t+1} + \gamma \hat{V}(S_{t+1};\theta) - \hat{V}(S_t;\theta)][\gamma \nabla_\theta \hat{V}(S_{t+1};\theta) - \nabla_\theta \hat{V}(S_t;\theta)]\)</span>$</p>
+<p>Notez le terme additionnel <span class="math notranslate nohighlight">\(\gamma \nabla_\theta \hat{V}(S_{t+1};\theta)\)</span> qui prend en compte comment <span class="math notranslate nohighlight">\(\theta\)</span> affecte la cible.</p>
+<p><strong>Pourquoi utiliser semi-gradient ?</strong></p>
+<ul class="simple">
+<li><p>Computationnellement plus simple (pas besoin de dériver à travers la cible)</p></li>
+<li><p>Souvent plus stable en pratique</p></li>
+<li><p>Converge sous certaines conditions (cas linéaire avec apprentissage on-policy)</p></li>
+<li><p>Le vrai gradient correspond aux algorithmes de gradient résiduel, qui peuvent être plus lents</p></li>
+</ul>
+</div>
+</section>
+<hr class="docutils" />
+<section id="exercice-3-analyse-de-l-experience-replay">
+<h3>Exercice 3 : Analyse de l’Experience Replay<a class="headerlink" href="#exercice-3-analyse-de-l-experience-replay" title="Link to this heading">#</a></h3>
+<p><strong>Question</strong> : Vous avez un replay buffer de taille <span class="math notranslate nohighlight">\(N=1000\)</span> et utilisez une batch size de 32. Après que le buffer soit plein, approximativement combien de fois chaque transition sera utilisée pour l’entraînement en moyenne avant d’être remplacée (en supposant un échantillonnage uniforme) ?</p>
+<p>Si les transitions restent dans le buffer pendant 1000 pas de temps en moyenne après avoir été ajoutées, et vous échantillonnez un batch à chaque pas de temps, calculez le nombre attendu de fois que chaque transition est échantillonnée.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<p><strong>Configuration :</strong></p>
+<ul class="simple">
+<li><p>Capacité du buffer : <span class="math notranslate nohighlight">\(N = 1000\)</span></p></li>
+<li><p>Batch size : <span class="math notranslate nohighlight">\(B = 32\)</span></p></li>
+<li><p>Durée de vie d’une transition dans le buffer : <span class="math notranslate nohighlight">\(L = 1000\)</span> pas de temps (en moyenne)</p></li>
+</ul>
+<p><strong>Analyse :</strong></p>
+<p>À chaque pas de temps (après que le buffer soit plein) :</p>
+<ul class="simple">
+<li><p>1 nouvelle transition est ajoutée</p></li>
+<li><p>1 ancienne transition est retirée</p></li>
+<li><p>1 batch de taille <span class="math notranslate nohighlight">\(B = 32\)</span> est échantillonné</p></li>
+</ul>
+<p>Pour une seule transition qui reste dans le buffer pendant <span class="math notranslate nohighlight">\(L\)</span> pas de temps :</p>
+<ul class="simple">
+<li><p>Nombre d’événements d’échantillonnage : <span class="math notranslate nohighlight">\(L = 1000\)</span></p></li>
+<li><p>Probabilité d’être sélectionnée en un tirage : <span class="math notranslate nohighlight">\(\frac{1}{N} = \frac{1}{1000}\)</span></p></li>
+<li><p>Nombre attendu de fois sélectionnée par batch : <span class="math notranslate nohighlight">\(B \cdot \frac{1}{N} = \frac{32}{1000} = 0.032\)</span></p></li>
+</ul>
+<p><strong>Nombre attendu de fois échantillonnée :</strong>
+$<span class="math notranslate nohighlight">\(\text{Échantillonnages attendus} = L \cdot B \cdot \frac{1}{N} = 1000 \cdot \frac{32}{1000} = 32\)</span>$</p>
+<p><strong>Interprétation :</strong> En moyenne, chaque transition est utilisée pour l’entraînement <strong>32 fois</strong> avant d’être évincée du buffer. Cela démontre le bénéfice d’efficacité des données de l’experience replay—chaque expérience est réutilisée 32 fois plutôt qu’une seule fois (comme dans l’apprentissage en ligne).</p>
+<p><strong>Note :</strong> Cela suppose un échantillonnage aléatoire uniforme. L’échantillonnage basé sur les priorités (prioritized experience replay) changerait cette distribution.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="exercice-4-impact-du-target-network">
+<h3>Exercice 4 : Impact du Target Network<a class="headerlink" href="#exercice-4-impact-du-target-network" title="Link to this heading">#</a></h3>
+<p><strong>Question</strong> : Considérez un scénario simple où la vraie Q-value est <span class="math notranslate nohighlight">\(Q^*(s,a) = 10\)</span>, mais votre estimation actuelle est <span class="math notranslate nohighlight">\(Q(s,a;\theta) = 2\)</span>. Vous recevez une récompense <span class="math notranslate nohighlight">\(r=1\)</span> et l’état suivant est terminal.</p>
+<p>(a) Sans target network, quelle est la cible <span class="math notranslate nohighlight">\(y\)</span> et l’erreur TD ?</p>
+<p>(b) Maintenant supposez que vous avez un target network où <span class="math notranslate nohighlight">\(Q(s,a;\theta^-) = 2\)</span> (même que le courant) mais après entraînement pendant un moment, le réseau en ligne s’améliore à <span class="math notranslate nohighlight">\(Q(s,a;\theta) = 6\)</span>. Le target network n’a pas encore été mis à jour. Quelle est la nouvelle erreur TD ?</p>
+<p>(c) Expliquez comment le target network aide à stabiliser l’apprentissage dans ce cas.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<p><strong>(a) Sans target network :</strong></p>
+<p>Puisque l’état suivant est terminal :
+$<span class="math notranslate nohighlight">\(y = r = 1\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(\text{Erreur TD} = y - Q(s,a;\theta) = 1 - 2 = -1\)</span>$</p>
+<p>L’erreur négative va pousser <span class="math notranslate nohighlight">\(Q(s,a;\theta)\)</span> vers le bas vers 1, ce qui s’éloigne en fait de la vraie valeur de 10 !</p>
+<p><strong>(b) Avec target network :</strong></p>
+<p>La cible est toujours calculée en utilisant <span class="math notranslate nohighlight">\(\theta^-\)</span> :
+$<span class="math notranslate nohighlight">\(y = r = 1\)</span>$ (état terminal, même qu’avant)</p>
+<p>Mais maintenant avec le réseau en ligne amélioré :
+$<span class="math notranslate nohighlight">\(\text{Erreur TD} = y - Q(s,a;\theta) = 1 - 6 = -5\)</span>$</p>
+<p>L’erreur est maintenant plus grande en magnitude parce que le réseau en ligne a plus divergé de la cible (incorrecte).</p>
+<p><strong>(c) Mécanisme de stabilisation :</strong></p>
+<p>Le target network aide à stabiliser l’apprentissage par :</p>
+<ol class="arabic simple">
+<li><p><strong>Prévenir les cibles mouvantes</strong> : Sans target network, améliorer <span class="math notranslate nohighlight">\(Q(s,a;\theta)\)</span> changerait immédiatement les cibles pour les paires état-action liées, créant un effet de “poursuite”.</p></li>
+<li><p><strong>Lisser les mises à jour</strong> : En mettant à jour <span class="math notranslate nohighlight">\(\theta^-\)</span> seulement périodiquement, on donne au réseau en ligne le temps d’apprendre d’un ensemble cohérent de cibles avant que les cibles ne changent.</p></li>
+<li><p><strong>Briser les boucles de feedback nuisibles</strong> : Si le réseau en ligne fait une erreur (ex. surestimer certaines Q-values), cette erreur ne se propagera pas immédiatement pour devenir la cible d’autres mises à jour.</p></li>
+</ol>
+<p><strong>Dans cet exemple spécifique</strong> : Le target network nous donne en fait une mauvaise cible (1 au lieu de 10), mais au moins elle est cohérente. En pratique, sur de nombreuses mises à jour avec diverses expériences, le réseau convergera finalement plus près des vraies valeurs. Sans le target network, l’instabilité des cibles constamment changeantes pourrait empêcher toute convergence.</p>
+<p><strong>Note importante</strong> : Les target networks ne garantissent pas une convergence correcte—ils améliorent juste la stabilité. La qualité de la convergence dépend toujours de l’exploration, du design des récompenses et d’autres facteurs.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="exercice-5-concevoir-des-features-pour-l-approximation-lineaire">
+<h3>Exercice 5 : Concevoir des Features pour l’Approximation Linéaire<a class="headerlink" href="#exercice-5-concevoir-des-features-pour-l-approximation-lineaire" title="Link to this heading">#</a></h3>
+<p><strong>Question</strong> : Vous construisez un agent RL pour une tâche de navigation de robot 2D. L’état est <span class="math notranslate nohighlight">\(s = (x, y, \theta, v)\)</span> où <span class="math notranslate nohighlight">\((x,y)\)</span> est la position, <span class="math notranslate nohighlight">\(\theta\)</span> est l’angle de cap (heading), et <span class="math notranslate nohighlight">\(v\)</span> est la vitesse. Le but est à la position <span class="math notranslate nohighlight">\((x_g, y_g)\)</span>.</p>
+<p>Concevez un vecteur de features <span class="math notranslate nohighlight">\(\phi(s)\)</span> pour l’approximation linéaire qui aiderait l’agent à apprendre une bonne fonction de valeur. Justifiez chaque feature que vous incluez.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<p><strong>Vecteur de features proposé</strong> <span class="math notranslate nohighlight">\(\phi(s)\)</span> :</p>
+<ol class="arabic simple">
+<li><p><strong>Terme de biais</strong> (bias term) : <span class="math notranslate nohighlight">\(\phi_1 = 1\)</span></p>
+<ul class="simple">
+<li><p>Permet à la fonction de valeur d’avoir une baseline non-nulle</p></li>
+</ul>
+</li>
+<li><p><strong>Distance au but</strong> : <span class="math notranslate nohighlight">\(\phi_2 = \sqrt{(x-x_g)^2 + (y-y_g)^2}\)</span></p>
+<ul class="simple">
+<li><p>Mesure directe du progrès ; plus proche = valeur plus élevée</p></li>
+</ul>
+</li>
+<li><p><strong>Distance au carré au but</strong> : <span class="math notranslate nohighlight">\(\phi_3 = (x-x_g)^2 + (y-y_g)^2\)</span></p>
+<ul class="simple">
+<li><p>Capture la relation non-linéaire ; permet une croissance plus rapide en s’approchant</p></li>
+</ul>
+</li>
+<li><p><strong>Alignement du cap</strong> (heading alignment) : <span class="math notranslate nohighlight">\(\phi_4 = \cos(\theta - \theta_{\text{goal}})\)</span></p>
+<ul class="simple">
+<li><p>Où <span class="math notranslate nohighlight">\(\theta_{\text{goal}} = \text{atan2}(y_g - y, x_g - x)\)</span></p></li>
+<li><p>Mesure si le robot fait face vers le but (+1 = aligné, -1 = opposé)</p></li>
+</ul>
+</li>
+<li><p><strong>Vitesse</strong> : <span class="math notranslate nohighlight">\(\phi_5 = v\)</span></p>
+<ul class="simple">
+<li><p>Se déplacer peut être récompensé ou pénalisé selon la tâche</p></li>
+</ul>
+</li>
+<li><p><strong>Vitesse × alignement du cap</strong> : <span class="math notranslate nohighlight">\(\phi_6 = v \cdot \cos(\theta - \theta_{\text{goal}})\)</span></p>
+<ul class="simple">
+<li><p>Capture la “vitesse utile” (se déplacer vers le but vs. s’en éloigner)</p></li>
+</ul>
+</li>
+<li><p><strong>Features de position</strong> (si l’environnement a une structure) :</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\phi_7 = x\)</span>, <span class="math notranslate nohighlight">\(\phi_8 = y\)</span></p></li>
+<li><p>Utile si différentes régions ont différentes valeurs (ex. obstacles)</p></li>
+</ul>
+</li>
+<li><p><strong>Features indicatrices</strong> (si nécessaire) :</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\phi_9 = \mathbb{1}[\text{distance} &lt; \epsilon]\)</span> pour région proche du but</p></li>
+<li><p><span class="math notranslate nohighlight">\(\phi_{10} = \mathbb{1}[\text{dans région obstacle}]\)</span></p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Vecteur de features final :</strong>
+$<span class="math notranslate nohighlight">\(\phi(s) = [1, d, d^2, \cos(\Delta\theta), v, v\cos(\Delta\theta), x, y, \mathbb{1}_{\text{proche}}, \mathbb{1}_{\text{obstacle}}]^T\)</span>$</p>
+<p>où <span class="math notranslate nohighlight">\(d\)</span> est la distance au but et <span class="math notranslate nohighlight">\(\Delta\theta\)</span> est l’erreur de cap.</p>
+<p><strong>Justification :</strong></p>
+<ul class="simple">
+<li><p><strong>Connaissance du domaine</strong> : Les features encodent ce qu’on sait être important (distance, alignement, vitesse)</p></li>
+<li><p><strong>Non-linéarité</strong> : Inclure <span class="math notranslate nohighlight">\(d^2\)</span> et des produits comme <span class="math notranslate nohighlight">\(v\cos(\Delta\theta)\)</span> ajoute du pouvoir expressif</p></li>
+<li><p><strong>Normalisation</strong> : En pratique, normaliser les features à des échelles similaires (ex. distance par distance max)</p></li>
+<li><p><strong>Dimensionnalité</strong> : 10 features est gérable ; des environnements plus complexes pourraient nécessiter 50-100+</p></li>
+</ul>
+<p><strong>Test</strong> : Après implémentation, vérifier si :</p>
+<ul class="simple">
+<li><p>Les valeurs sont plus élevées près du but (tester sur des états construits à la main)</p></li>
+<li><p>Le gradient pointe dans des directions sensées</p></li>
+<li><p>L’apprentissage converge sur des scénarios simples</p></li>
+</ul>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="points-cles-a-retenir">
+<h2>Points Clés à Retenir<a class="headerlink" href="#points-cles-a-retenir" title="Link to this heading">#</a></h2>
+<div class="important admonition">
+<p class="admonition-title">Concepts Fondamentaux</p>
+<p><strong>1. Nécessité de l’Approximation</strong></p>
+<ul class="simple">
+<li><p>Les espaces d’états continus ou de grande dimension rendent les méthodes tabulaires impossibles</p></li>
+<li><p>L’approximation de fonctions permet la <strong>généralisation</strong> : transférer l’apprentissage vers des états non-visités</p></li>
+<li><p>Compromis inévitable entre expressivité et stabilité</p></li>
+</ul>
+<p><strong>2. Approximation Linéaire vs Non-Linéaire</strong></p>
+<ul class="simple">
+<li><p><strong>Linéaire</strong> : Stable, convergence garantie (sous conditions), mais nécessite un bon feature engineering</p></li>
+<li><p><strong>Non-linéaire (Deep RL)</strong> : Très expressif, apprend ses propres features, mais instable et difficile à optimiser</p></li>
+</ul>
+<p><strong>3. La Deadly Triad</strong></p>
+<ul class="simple">
+<li><p>Combinaison dangereuse : Function approximation + Bootstrapping + Off-policy learning</p></li>
+<li><p>Peut mener à la divergence sans techniques de stabilisation appropriées</p></li>
+<li><p>Comprendre cette triade aide à anticiper et résoudre les problèmes d’instabilité</p></li>
+</ul>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">Techniques Pratiques Essentielles</p>
+<p><strong>Stabilisation en Deep RL</strong> (indispensables pour DQN et variantes) :</p>
+<ul class="simple">
+<li><p><strong>Experience replay</strong> : Brise les corrélations temporelles et améliore l’efficacité des données</p></li>
+<li><p><strong>Target network</strong> : Stabilise les cibles d’apprentissage en les maintenant fixes temporairement</p></li>
+<li><p><strong>Gradient clipping</strong> : Prévient l’explosion des gradients</p></li>
+<li><p><strong>Normalisation</strong> : Des inputs et des récompenses pour un apprentissage stable</p></li>
+</ul>
+<p><strong>Pipeline de Développement</strong> :</p>
+<ol class="arabic simple">
+<li><p>Commencer avec des environnements simples (CartPole, MountainCar)</p></li>
+<li><p>Tester d’abord l’approximation linéaire pour valider le pipeline</p></li>
+<li><p>Monitorer les bonnes métriques (erreur TD, Q-values, retours)</p></li>
+<li><p>Augmenter la complexité progressivement seulement si nécessaire</p></li>
+</ol>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Trade-offs et Décisions de Design</p>
+<p><strong>Choix de l’Approximateur</strong> :</p>
+<ul class="simple">
+<li><p>Linéaire si : espace d’états petit/moyen, features bien comprises, besoin de garanties théoriques</p></li>
+<li><p>Non-linéaire si : espace d’états très grand/continu, patterns complexes, données abondantes</p></li>
+</ul>
+<p><strong>Hyperparamètres Critiques</strong> :</p>
+<ul class="simple">
+<li><p><strong>Learning rate α</strong> : Impact majeur sur convergence (trop grand → instabilité, trop petit → lent)</p></li>
+<li><p><strong>Replay buffer</strong> : Équilibre mémoire vs. diversité des données</p></li>
+<li><p><strong>Target update frequency</strong> : Équilibre stabilité vs. réactivité aux changements</p></li>
+</ul>
+<p><strong>Debugging</strong> :</p>
+<ul class="simple">
+<li><p>Si divergence : Réduire α, augmenter fréquence de mise à jour du target, vérifier échelle des récompenses</p></li>
+<li><p>Si apprentissage trop lent : Augmenter α, vérifier exploration, améliorer features/architecture</p></li>
+<li><p>Si overfitting : Augmenter taille du buffer, ajouter régularisation, diversifier données</p></li>
+</ul>
+</div>
+<div class="warning admonition">
+<p class="admonition-title">Applications et Limitations</p>
+<p><strong>Quand Utiliser Function Approximation</strong> :</p>
+<ul class="simple">
+<li><p>✓ Espaces d’états continus (robotique, contrôle)</p></li>
+<li><p>✓ Espaces d’états discrets mais très grands (jeux complexes, planification)</p></li>
+<li><p>✓ Besoin de généralisation entre états similaires</p></li>
+<li><p>✓ États représentés par images ou signaux haute dimension</p></li>
+</ul>
+<p><strong>Limitations à Connaître</strong> :</p>
+<ul class="simple">
+<li><p>✗ Pas de garantie de convergence (surtout avec deadly triad)</p></li>
+<li><p>✗ Sensibilité aux hyperparamètres</p></li>
+<li><p>✗ Temps d’entraînement long pour deep RL</p></li>
+<li><p>✗ Peut nécessiter beaucoup de données pour bien généraliser</p></li>
+<li><p>✗ Interprétabilité réduite (surtout réseaux profonds)</p></li>
+</ul>
+<p><strong>En Pratique</strong> :</p>
+<ul class="simple">
+<li><p>Toujours comparer avec baseline simple (random policy, heuristique)</p></li>
+<li><p>Utiliser plusieurs seeds aléatoires pour évaluer la robustesse</p></li>
+<li><p>Documenter tous les hyperparamètres et choix d’architecture</p></li>
+<li><p>Valider sur environnements de test différents de l’entraînement</p></li>
+</ul>
+</div>
+<div class="seealso admonition">
+<p class="admonition-title">Formules Clés à Retenir</p>
+<p><strong>Approximation Linéaire</strong> :
+$<span class="math notranslate nohighlight">\(\hat{V}(s;\theta) = \theta^T \phi(s)\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha \delta_t \phi(s_t) \quad \text{où} \quad \delta_t = r_{t+1} + \gamma \hat{V}(s_{t+1};\theta) - \hat{V}(s_t;\theta)\)</span>$</p>
+<p><strong>Deep RL (DQN)</strong> :
+$<span class="math notranslate nohighlight">\(L(\theta) = \mathbb{E}_{(s,a,r,s')\sim \mathcal{D}}\left[ \left(r + \gamma \max_{a'} Q(s',a';\theta^-) - Q(s,a;\theta)\right)^2 \right]\)</span>$</p>
+<p><strong>Mise à Jour Gradient</strong> :
+$<span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha (y - Q(s,a;\theta)) \nabla_\theta Q(s,a;\theta)\)</span>$</p>
+<p><strong>Target Network Update</strong> :</p>
+<ul class="simple">
+<li><p>Hard : <span class="math notranslate nohighlight">\(\theta^- \leftarrow \theta\)</span> tous les <span class="math notranslate nohighlight">\(C\)</span> pas</p></li>
+<li><p>Soft : <span class="math notranslate nohighlight">\(\theta^- \leftarrow \tau\theta + (1-\tau)\theta^-\)</span> avec <span class="math notranslate nohighlight">\(\tau \ll 1\)</span></p></li>
+</ul>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./theorie"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="04_td_learning.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Temporal-Difference (TD) Learning</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="06_policy_gradients.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">07 — Policy Gradient Methods (REINFORCE, Actor-Critic)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximation-lineaire-linear-function-approximation">1. Approximation Linéaire (Linear Function Approximation)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#concept">Concept</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mise-a-jour-basee-sur-le-gradient-semi-gradient-td">Mise à Jour Basée sur le Gradient (Semi-Gradient TD)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithme-semi-gradient-td-0-avec-approximation-lineaire">Algorithme : Semi-Gradient TD(0) avec Approximation Linéaire</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#avantages-et-limitations">Avantages et Limitations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximation-non-lineaire-deep-reinforcement-learning">2. Approximation Non-Linéaire : Deep Reinforcement Learning</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#approximateurs-par-reseaux-de-neurones-neural-network-approximators">Approximateurs par Réseaux de Neurones (Neural Network Approximators)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#objectif-d-entrainement-training-objective">Objectif d’Entraînement (Training Objective)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mise-a-jour-du-gradient">Mise à Jour du Gradient</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#techniques-de-stabilisation">3. Techniques de Stabilisation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#methodes-cles-de-stabilisation">Méthodes Clés de Stabilisation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#experience-replay-buffer-lin-1992-mnih-et-al-2015">Experience Replay Buffer (Lin, 1992; Mnih et al., 2015)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#target-network-mnih-et-al-2015">Target Network (Mnih et al., 2015)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#techniques-additionnelles">Techniques Additionnelles</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithme-dqn-deep-q-network">4. Algorithme DQN (Deep Q-Network)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#considerations-theoriques-bonnes-pratiques">5. Considérations Théoriques &amp; Bonnes Pratiques</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-deadly-triad-triade-mortelle">The Deadly Triad (Triade Mortelle)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trade-off-biais-variance">Trade-off Biais-Variance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercices">Exercices</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-1-approximation-lineaire">Exercice 1 : Approximation Linéaire</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-2-semi-gradient-vs-vrai-gradient">Exercice 2 : Semi-Gradient vs Vrai Gradient</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-3-analyse-de-l-experience-replay">Exercice 3 : Analyse de l’Experience Replay</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-4-impact-du-target-network">Exercice 4 : Impact du Target Network</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercice-5-concevoir-des-features-pour-l-approximation-lineaire">Exercice 5 : Concevoir des Features pour l’Approximation Linéaire</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#points-cles-a-retenir">Points Clés à Retenir</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Béria C. Kalpélbé
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
