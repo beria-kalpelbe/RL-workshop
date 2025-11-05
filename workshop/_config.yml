@@ -20,8 +20,10 @@ repository:
 
 html:
   favicon: "_static/favicon.ico"
-  use_issues_button: true
-  use_repository_button: true
+  use_issues_button: false
+  use_repository_button: false
+  use_edit_page_button: false
+  use_download_button: false
   baseurl: /RL-workshop/
 
 sphinx:

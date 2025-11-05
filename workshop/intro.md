@@ -43,23 +43,10 @@ Apportez simplement votre **bloc-note**, votre **curiosité** et votre **envie d
 
 ## Comment utiliser ce livre
 
-- Suivez les chapitres dans l’ordre :
-  1. Concepts fondamentaux du RL
-  2. Processus de décision de Markov (MDP)
-  3. Dynamic Programming
-  4. Monte Carlo Methods
-  5. Temporal-Difference (TD) learning, SARSA, Q-learning
-  6. Function approximation et généralisation
-  7. Policy gradient methods
-  8. Deep Reinforcement Learning
-  9. Cas pratique : CartPole
-  10. Applications du RL
-  11. Références et ressources
-
-
+- Suivez les chapitres dans l’ordre pour une progression pédagogique optimale.
 - Chaque chapitre contient :
-  - des encadrés **Intuition**, **Maths** et **Pseudocode** ;
-  - des **exemples** et **exercices pratiques** ;
+  - des **encadrés**, **pseudo-codes** et **résumés** pour synthétiser les points clés ;
+  - des **exercices pratiques** avec solutions commentées. Il est recommandé de les faire soi-même avant de consulter les réponses.;
 
 ---
 

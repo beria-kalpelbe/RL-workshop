@@ -1,3 +1,13 @@
 jupyter-book
-matplotlib
+gymnasium
 numpy
+tensorflow
+tensorflow
+matplotlib
+imageio
+IPython.display
+matplotlib
+tqdm
+collections
+random
+gymnasium[classic-control]
